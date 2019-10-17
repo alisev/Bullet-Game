@@ -2,21 +2,26 @@
 # Requires Python and PyGame to run
 # Avoid bullets and try to get the highest score
 
-import pygame, sys
+# TODO: Add enemies and highscore
+
+import pygame
 from pygame.locals import *
 
 # --Essentals for game running--
 pygame.init()
-SCR_X = 236
-SCR_Y = 420
+SCR_X = 800
+SCR_Y = 600
 DISPLAYSURF = pygame.display.set_mode((SCR_X, SCR_Y))
 pygame.display.set_caption('Hello World!')
 clock = pygame.time.Clock()
+done = False
 
 # --A couple of constants used in the game--
 FPS = 60
 BGCOLOR = (16, 20, 38)
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+YELLOW = (247,190,22)
 
 # Speed in pixels per frame (default values)
 x_speed = 0
@@ -28,11 +33,15 @@ x_coord = SCR_X / 2 - 12
 y_coord = SCR_Y / 6 * 5
 
 # Splash, Gamewin and Gameover screen
-# TODO: make the splash screen
+# TODO: make the screens
 # IMPORTANT: splash, gamewin and gameover cannot be all true!
 display_splash = True
 display_gameover = False
 display_gamewin = False
+
+# Fonts
+# TODO: Choose a good font size and font family to use
+title = pygame.font.Font(None, 48)
 font = pygame.font.Font(None, 36)
 
 # Player object
@@ -63,13 +72,47 @@ def movePlayer(x, y):
     elif y_coord < 0:
         y_coord = 0
 
-# --Main game loop--
-while True:
+# -- Splash screen --
+# -- TODO design and program a nice splash screen
+# -- Instructions should be moved to separate page
+while not done and display_splash:
     # Event handling
     for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
+        if event.type == pygame.QUIT:
+            done = True
+        if event.type == pygame.KEYDOWN:
+            # TODO make menu items selectable via arrow keys and return key
+            if event.key == pygame.K_RETURN:
+                display_splash = False
+    
+    # Game logic
+
+    # Refresh screen
+    DISPLAYSURF.fill(BGCOLOR)
+
+    # Drawing code
+    # TODO: Proper title name and item position
+    text = font.render("TODO game title", False, YELLOW)
+    DISPLAYSURF.blit(text, [10, 10])
+
+    text = font.render("Play", False, YELLOW)
+    DISPLAYSURF.blit(text, [10, 40])
+
+    text = font.render("Instructions", False, YELLOW)
+    DISPLAYSURF.blit(text, [10, 70])
+
+    pygame.display.update()
+    clock.tick(FPS)
+
+# -- Game Over screen --
+# -- TODO: Make one
+
+# -- Main game loop --
+while not done and display_splash == False and display_gameover == False and display_gamewin == False:
+    # Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
 
         elif event.type == pygame.KEYDOWN:
             print("User pressed a key")
@@ -100,3 +143,5 @@ while True:
 
     pygame.display.update()
     clock.tick(FPS)
+
+pygame.quit()
