@@ -12,7 +12,7 @@ pygame.init()
 SCR_X = 800
 SCR_Y = 600
 DISPLAYSURF = pygame.display.set_mode((SCR_X, SCR_Y))
-pygame.display.set_caption('Hello World!')
+pygame.display.set_caption('Space Cruise')
 clock = pygame.time.Clock()
 done = False
 
@@ -32,6 +32,11 @@ speed = 3
 x_coord = SCR_X / 2 - 12
 y_coord = SCR_Y / 6 * 5
 
+enemy_x = 10
+enemy_y = 10
+enemy_x_speed = 3
+enemy_y_speed = 3
+
 # Splash, Gamewin and Gameover screen
 # TODO: make the screens
 # IMPORTANT: splash, gamewin and gameover cannot be all true!
@@ -42,12 +47,15 @@ display_gamewin = False
 # Fonts
 # TODO: Choose a good font size and font family to use
 title = pygame.font.Font(None, 48)
-font = pygame.font.Font(None, 36)
+font = pygame.font.Font(None, 48)
 
 # Player object
 # TODO: replace with a sprite
 def drawPlayer(screen, x, y):
     pygame.draw.polygon(screen, WHITE, [[x + 16, y], [x, y + 24], [x + 32, y + 24]], 0)
+
+def drawEnemy(screen, pos_x, pos_y):
+    pygame.draw.rect(screen, YELLOW, [pos_x, pos_y, 24, 24], 0)
 
 def movePlayer(x, y):
     global x_coord
@@ -72,6 +80,18 @@ def movePlayer(x, y):
     elif y_coord < 0:
         y_coord = 0
 
+def moveEnemy():
+    global enemy_x
+    global enemy_y
+    global enemy_x_speed
+    global enemy_y_speed
+    enemy_x = enemy_x + enemy_x_speed
+    enemy_y = enemy_y + enemy_y_speed
+    if enemy_x > SCR_X or enemy_x < 0:
+        enemy_x_speed = enemy_x_speed * (-1)
+    if enemy_y > SCR_Y or enemy_y < 0:
+        enemy_y_speed = enemy_y_speed * (-1)
+
 # -- Splash screen --
 # -- TODO design and program a nice splash screen
 # -- Instructions should be moved to separate page
@@ -92,14 +112,20 @@ while not done and display_splash:
 
     # Drawing code
     # TODO: Proper title name and item position
-    text = font.render("TODO game title", False, YELLOW)
-    DISPLAYSURF.blit(text, [10, 10])
+    text = font.render('Space Cruise', False, YELLOW)
+    DISPLAYSURF.blit(text, [100, 100])
 
-    text = font.render("Play", False, YELLOW)
-    DISPLAYSURF.blit(text, [10, 40])
+    text = font.render('Play', False, YELLOW)
+    DISPLAYSURF.blit(text, [10, 300])
 
-    text = font.render("Instructions", False, YELLOW)
-    DISPLAYSURF.blit(text, [10, 70])
+    text = font.render('Level select', False, YELLOW)
+    DISPLAYSURF.blit(text, [10, 350])
+
+    text = font.render('Instructions', False, YELLOW)
+    DISPLAYSURF.blit(text, [10, 400])
+
+    text = font.render('Quit', False, YELLOW)
+    DISPLAYSURF.blit(text, [10, 450])
 
     pygame.display.update()
     clock.tick(FPS)
@@ -108,7 +134,7 @@ while not done and display_splash:
 # -- TODO: Make one
 
 # -- Main game loop --
-while not done and display_splash == False and display_gameover == False and display_gamewin == False:
+while not done:
     # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -134,12 +160,14 @@ while not done and display_splash == False and display_gameover == False and dis
 
     # Game logic
     movePlayer(x_speed, y_speed)
+    moveEnemy()
 
     # Refresh screen
     DISPLAYSURF.fill(BGCOLOR)
 
     # Drawing code
     drawPlayer(DISPLAYSURF, x_coord, y_coord)
+    drawEnemy(DISPLAYSURF, enemy_x, enemy_y)
 
     pygame.display.update()
     clock.tick(FPS)
