@@ -7,13 +7,17 @@
 import pygame
 import constants
 import chara
+import bullet
 
 # --Essentals for game running--
 pygame.init()
-DISPLAYSURF = pygame.display.set_mode((constants.SCREEN_X, constants.SCREEN_Y))
+constants.DISPLAYSURF
 pygame.display.set_caption(constants.TITLE)
 clock = pygame.time.Clock()
 done = False
+
+# --Loads a couple of sprites--
+TITLE_LOGO = pygame.image.load("sprites\\title.png").convert_alpha()
 
 # Splash, Gamewin and Gameover screen
 # TODO: make the screens
@@ -43,24 +47,23 @@ while not done and display_splash:
     # Game logic
 
     # Refresh screen
-    DISPLAYSURF.fill(constants.BGCOLOR)
+    constants.DISPLAYSURF.fill(constants.BGCOLOR)
 
     # Drawing code
     # TODO: Proper title name and item position
-    text = font.render(constants.TITLE, False, constants.YELLOW)
-    DISPLAYSURF.blit(text, [100, 100])
+    constants.DISPLAYSURF.blit(TITLE_LOGO,(121,100))
 
     text = font.render('Play', False, constants.YELLOW)
-    DISPLAYSURF.blit(text, [10, 300])
+    constants.DISPLAYSURF.blit(text, [10, 300])
 
     text = font.render('Level select', False, constants.YELLOW)
-    DISPLAYSURF.blit(text, [10, 350])
+    constants.DISPLAYSURF.blit(text, [10, 350])
 
     text = font.render('Instructions', False, constants.YELLOW)
-    DISPLAYSURF.blit(text, [10, 400])
+    constants.DISPLAYSURF.blit(text, [10, 400])
 
     text = font.render('Quit', False, constants.YELLOW)
-    DISPLAYSURF.blit(text, [10, 450])
+    constants.DISPLAYSURF.blit(text, [10, 450])
 
     pygame.display.update()
     clock.tick(constants.FPS)
@@ -95,12 +98,21 @@ while not done:
 
     # Game logic
     chara.player.recalcPos()
+    bullet.test.recalcPos(1, 1)
+
+    # TODO move the function inside recalcPos
+    # TODO when collission is detected, the game should show gameover screen
+    bullet.test.collide(chara.player)
 
     # Refresh screen
-    DISPLAYSURF.fill(constants.BGCOLOR)
+    constants.DISPLAYSURF.fill(constants.BGCOLOR)
 
     # Drawing code
-    chara.player.draw(DISPLAYSURF)
+    constants.DISPLAYSURF.blit(chara.player.image,(chara.player.x_pos, chara.player.y_pos))
+    bullet.test.draw()
+
+    bullet.test.drawHitbox()
+    chara.player.drawHitbox()
 
     pygame.display.update()
     clock.tick(constants.FPS)
