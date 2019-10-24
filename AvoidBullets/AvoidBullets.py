@@ -2,12 +2,11 @@
 # Requires Python and PyGame to run
 # Avoid bullets and try to get the highest score
 
-# TODO: Add enemies and highscore
-
 import pygame
 import constants
 import chara
 import bullet
+import levels
 
 # --Essentals for game running--
 pygame.init()
@@ -23,24 +22,18 @@ TITLE_LOGO = pygame.image.load("sprites\\title.png").convert_alpha()
 # TODO: make the screens
 # IMPORTANT: splash, gamewin and gameover cannot be all true!
 display_splash = True
-display_gameover = False
-display_gamewin = False
+gameEnd = False
 
 # Fonts
-# TODO: Choose a good font size and font family to use
-title = pygame.font.Font(None, 48)
-font = pygame.font.Font(None, 48)
+font = pygame.font.SysFont('Consolas', 28)
 
 # -- Splash screen --
-# -- TODO design and program a nice splash screen
-# -- Instructions should be moved to separate page
 while not done and display_splash:
     # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
         if event.type == pygame.KEYDOWN:
-            # TODO make menu items selectable via arrow keys and return key
             if event.key == pygame.K_RETURN:
                 display_splash = False
     
@@ -50,29 +43,30 @@ while not done and display_splash:
     constants.DISPLAYSURF.fill(constants.BGCOLOR)
 
     # Drawing code
-    # TODO: Proper title name and item position
+    # Text formating
+    LINE_SPACING = 40
+    ITEM_X_POS = 100
+    FIRST_ITEM_Y_POS = 350
+
     constants.DISPLAYSURF.blit(TITLE_LOGO,(121,100))
 
-    text = font.render('Play', False, constants.YELLOW)
-    constants.DISPLAYSURF.blit(text, [10, 300])
+    text = font.render('Instructions:', True, constants.YELLOW)
+    constants.DISPLAYSURF.blit(text, [ITEM_X_POS, FIRST_ITEM_Y_POS])
 
-    text = font.render('Level select', False, constants.YELLOW)
-    constants.DISPLAYSURF.blit(text, [10, 350])
+    text = font.render(' - Use arrow keys to avoid projectiles', True, constants.YELLOW)
+    constants.DISPLAYSURF.blit(text, [ITEM_X_POS, FIRST_ITEM_Y_POS + LINE_SPACING])
 
-    text = font.render('Instructions', False, constants.YELLOW)
-    constants.DISPLAYSURF.blit(text, [10, 400])
+    text = font.render(' - Survive for as long as you can', True, constants.YELLOW)
+    constants.DISPLAYSURF.blit(text, [ITEM_X_POS, FIRST_ITEM_Y_POS + LINE_SPACING * 2])
 
-    text = font.render('Quit', False, constants.YELLOW)
-    constants.DISPLAYSURF.blit(text, [10, 450])
+    text = font.render('Press Enter key to start the game', True, constants.YELLOW)
+    constants.DISPLAYSURF.blit(text, [ITEM_X_POS, FIRST_ITEM_Y_POS + LINE_SPACING * 3 + 20])
 
     pygame.display.update()
     clock.tick(constants.FPS)
 
-# -- Game Over screen --
-# -- TODO: Make one
-
 # -- Main game loop --
-while not done:
+while not done and gameEnd == False:
     # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -100,21 +94,40 @@ while not done:
     chara.player.recalcPos()
     bullet.test.recalcPos(1, 1)
 
-    # TODO move the function inside recalcPos
-    # TODO when collission is detected, the game should show gameover screen
     bullet.test.collide(chara.player)
 
     # Refresh screen
     constants.DISPLAYSURF.fill(constants.BGCOLOR)
 
     # Drawing code
-    constants.DISPLAYSURF.blit(chara.player.image,(chara.player.x_pos, chara.player.y_pos))
-    bullet.test.draw()
+    chara.spriteList.draw(constants.DISPLAYSURF)
+    bullet.spriteList.draw(constants.DISPLAYSURF)
 
     bullet.test.drawHitbox()
     chara.player.drawHitbox()
 
+    levels.displayHighscoreCounter()
+    chara.displayLives()
+
     pygame.display.update()
     clock.tick(constants.FPS)
+
+# -- Gameover loop --
+while not done and gameEnd:
+    #Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                print('TODO: Return to menu')
+
+    #Game Logic
+
+    # Refresh screen
+    constants.DISPLAYSURF.fill(constants.BGCOLOR)
+
+    #Drawing code
+
 
 pygame.quit()

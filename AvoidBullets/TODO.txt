@@ -1,0 +1,95 @@
+TO DO list: IMPORTANT THINGS
+- Lives
+	- Function that calls Gameover screen, when player dies
+- Bullets
+	- Sprites for each
+	- Functions that calculate their movement
+	- Follows their enemy (set as a parent object basically)
+	- Remove function that deletes the bullet, when it collides or goes off-screen
+	- Combine bullet's movement and collision detection functions
+- Enemies
+	- Sprites
+	- Functions for their movement
+- Player
+	- Smaller bounds
+- Splash screen
+	- See the sketch for visual reference
+	- If I don't have enough time, just display instructions on splash and command to start game
+- Levels
+	- Each has their own function that calls enemies and bullets
+	- Displays level number at the start of each level
+	- All level's functions are kept in a separate file
+	- During level highscore gets increased
+- Other screens
+	- Gamewin when player survives the final boss
+	- Gameover when they run out of lives
+- Character and Bullet class
+	- Character
+		- recalcPos
+			- calls move(move_x, move_y) from Entity class - DONE
+				- move_x, move_y - how much entity has moved
+			- calls checkBound(x_min, x_max, y_min, y_max)
+				- for some reason changing checkbound values causes player sprite to disappear
+				- ensure that the function is written correctly
+				- add input arguments for the bounds, because the enemies could move only around certain area
+				- x_min, x_max, y_min, y_max - bound's corner positions
+				- x_pos, y_pos, width, height - alternate arguments
+					- if isPlayer: can't leave bounds
+					- else: return a bool variable to use
+			- calls updateHitbox(x_pos, y_pos, width, height)
+				- x_pos, y_pos - hitbox's position. Relative to Character's position
+				- width, height - hitbox's width and height
+			- add bound(tuple) and hitboxSize(tuple) properties
+	- Bullet
+		- recalcPos
+			- calls move(move_x, move_y)
+			- checkBound(x_min, x_max, y_min, y_max)
+				- checks if bullet is still inside screen
+				- x_min = 0, x_max = constants.SCREEN_X, y_min = 0, y_max = constants.SCREEN_Y
+				- if not: remove and return
+			- updateHitbox(x_pos, y_pos, width, height)
+
+
+
+
+
+IF I HAVE ENOUGH TIME FOR THIS:
+- Highscore
+	- Add a screen for displaying 10 best scores in descending order
+	- Better formatted highscore:
+		- BAD:	5
+		- GOOD:	0000 0005
+- Lives
+	- Better visual aesthetic
+- Splash screen
+	- Implement full menu with
+		- Play:				Starts the game
+		- Level selection:	Selects and plays a particular level
+		- Instructions:		Shows controls on separate screen
+		- Quit:				Closes window
+- Player
+	- Player can shoot enemies
+- Enemies
+	- Are destroyed when shot
+		- Shows explosion animation
+- Sound
+	- Royality free
+	- Background music
+		- Splash screen (calm)
+		- Game music (intense)
+		- Ideally game music would get more and more intense with each level
+	- Sound effects
+		- Bullets
+		- Explosions
+- Additional content
+	- Extra lives (rare)
+	- Boosts
+		- Stronger attack
+		- Higher speed
+		- Lower speed
+- Font
+	- Use a better font
+- Other screens
+	- Move functions for all screens except game's to a new file
+- Classes
+	- Make some class methods private if possible.

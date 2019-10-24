@@ -1,48 +1,25 @@
 import pygame
 import constants
+import entity
 
 '''
     Defines character class and objects.
 '''
 
-class Character(pygame.sprite.Sprite):
+class Character(entity.Entity):
     '''
-        Character data. Used for both the player and enemies. Has the following properties:
-            name            Character's name.
-            x_pos, y_pos    Character's position on screen
-            width, height   Character's width and height
-            speed           Character's movement speed
+        Character data. Used for both the player and enemies.
+        Has the following properties. The rest are defined in Entity class.
             move_x, move_y  Character's movement "vectors". Value usually switches between -1, 0 and 1. When value is -1 or 1 the character is moving across the screen, when 0 - it is still
-            hp              Character's health points.
-            image           Character's sprite.
-            hitbox          Character's hitbox
+            lives           Number of lives a character has. Each character has 1 life by default.
             isPlayer        Defines if character is the player
     '''
     def __init__(self, img):
-        super().__init__()
-        self.name = ""
-        self.x_pos = 0
-        self.y_pos = 0
-        self.width = 0
-        self.height = 0
-        self.speed = 0
+        super().__init__(img)
         self.move_x = 0
         self.move_y = 0
-        self.hp = 0
-        self.color = constants.WHITE
-        self.image = img
-        self.hitbox = (self.x_pos, self.y_pos, self.width, self.height)
+        self.lives = 1
         self.isPlayer = False
-
-    def draw(self):
-        '''
-            Draws character on screen.
-            screen - Pygame display object
-        '''
-        point_1 = [self.x_pos + self.width/2, self.y_pos]
-        point_2 = [self.x_pos, self.y_pos + self.height]
-        point_3 = [self.x_pos + self.width, self.y_pos + self.height]
-        pygame.draw.polygon(constants.DISPLAYSURF, self.color, [point_1, point_2, point_3], 0)
 
     def moveX(self, x=0):
         '''
@@ -62,52 +39,64 @@ class Character(pygame.sprite.Sprite):
         '''
             Recalculates character's position on screen. If it is the player's character, then an additional function checks if player isn't leaving the screen's bounds.
         '''
-        self.x_pos = self.x_pos + self.move_x
-        self.y_pos = self.y_pos + self.move_y
+        self.move(self.move_x, self.move_y)
         if self.isPlayer:
             self.checkBounds()
-        self.hitbox = (self.x_pos, self.y_pos, self.width, self.height)
+        self.hitbox = (self.rect.x, self.rect.y, self.width, self.height)
 
     def checkBounds(self):
         '''
             Checks if character isn't leaving the bounds. Used mainly for player character.
+            x_min, x_max, y_min, y_max - bound's corner positions.
         '''
         max_x = constants.SCREEN_X - self.width
         max_y = constants.SCREEN_Y - self.height
-        if self.x_pos > max_x:
-            self.x_pos = max_x
-        elif self.x_pos < 0:
-            self.x_pos = 0
-        if self.y_pos > max_y:
-            self.y_pos = max_y
-        elif self.y_pos < 0:
-            self.y_pos = 0
+        if self.rect.x > max_x:
+            self.rect.x = max_x
+        elif self.rect.x < 0:
+            self.rect.x = 0
+        if self.rect.y > max_y:
+            self.rect.y = max_y
+        elif self.rect.y < 0:
+            self.rect.y = 0
 
-    def detectCollision(self, entity):
+    def gotHit(self):
         '''
-            Detects when character is hit by something.
-            TODO maybe it's better to make a class for bullets and they check if they have collided with anything?
-            entity - another character or bullet which collides with this character
+            When character is hit by a bullet, it loses life points.
         '''
         print(self.name, 'got hit')
-
-    def drawHitbox(self):
-        '''
-            Draws character's hitbox border. For testing only.
-        '''
-        pygame.draw.rect(constants.DISPLAYSURF, (255,0,0), (self.x_pos, self.y_pos, self.width, self.height), 2)
+        self.lives = self.lives - 1
+        if self.lives == 0:
+            # TODO add code that removes enemy and shows game over screen to the player
+            if self.isPlayer:
+                # Calls GAME OVER
+                pass
+            else:
+                # Removes character from screen
+                self.remove()
+                self.isActive = False
+            print(self.name, 'has died')
 
 # Player character data
-# NOTE: Doesn't contain information on player's health points or sprites.
 ship = pygame.image.load("sprites\\ship.png").convert_alpha()
 player = Character(ship)
 player.name = "Player"
-player.x_pos = constants.SCREEN_X / 2 - 12
-player.y_pos = constants.SCREEN_Y / 6 * 5
+player.rect.x = constants.SCREEN_X / 2 - 12
+player.rect.y = constants.SCREEN_Y / 6 * 5
 player.width = 32
 player.height = 24
 player.speed = 3
+player.lives = 3
 player.isPlayer = True
+
+# Player specific function
+def displayLives():
+    '''
+        Displays how many lives player has left.
+    '''
+    font = pygame.font.Font(None, 36)
+    lives = font.render('Lives: ' + str(player.lives), False, constants.YELLOW)
+    constants.DISPLAYSURF.blit(lives, [20, 20])
 
 # Test enemy character data
 test = Character(ship)
@@ -116,3 +105,7 @@ test.width = 24
 test.height = 24
 test.speed = 3
 test.color = constants.YELLOW
+
+# List of each character
+spriteList = pygame.sprite.Group()
+spriteList.add(player)
