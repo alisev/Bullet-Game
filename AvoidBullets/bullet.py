@@ -56,13 +56,20 @@ class Bullet(entity.Entity):
             character.gotHit()
             self.remove()
 
-ship = pygame.image.load("sprites\\ship.png").convert_alpha()
-test = Bullet(ship)
+image = pygame.image.load("sprites\\ship.png").convert_alpha()
+test = Bullet(image)
 test.name = "Test enemy"
 test.width = 24
 test.height = 24
 test.speed = 3
 test.color = constants.YELLOW
 
+image = pygame.image.load("sprites\\meteor.png").convert_alpha()
+meteor = Bullet(image)
+meteor.name = "Meteor"
+meteor.width = 24
+meteor.height = 24
+
 spriteList = pygame.sprite.Group()
 spriteList.add(test)
+

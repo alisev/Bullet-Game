@@ -16,9 +16,7 @@ TO DO list: IMPORTANT THINGS
 	- See the sketch for visual reference
 	- If I don't have enough time, just display instructions on splash and command to start game
 - Levels
-	- Each has their own function that calls enemies and bullets
 	- Displays level number at the start of each level
-	- All level's functions are kept in a separate file
 	- During level highscore gets increased
 - Other screens
 	- Gamewin when player survives the final boss
@@ -93,3 +91,9 @@ IF I HAVE ENOUGH TIME FOR THIS:
 	- Move functions for all screens except game's to a new file
 - Classes
 	- Make some class methods private if possible.
+
+LEVEL IMPLEMENTATIOMN:
+ - There are several levels
+ - Each level has several 'acts'
+ - Acts change when all bullets and enemies from before are gone (self.kill)
+ - BEfore each act sprite group is initialized

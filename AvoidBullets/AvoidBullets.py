@@ -92,18 +92,17 @@ while not done and gameEnd == False:
 
     # Game logic
     chara.player.recalcPos()
-    bullet.test.recalcPos(1, 1)
-
-    bullet.test.collide(chara.player)
+    levels.callLevel()
+    # recalc pos for all sprites
+    # test for collissions
 
     # Refresh screen
     constants.DISPLAYSURF.fill(constants.BGCOLOR)
 
     # Drawing code
     chara.spriteList.draw(constants.DISPLAYSURF)
-    bullet.spriteList.draw(constants.DISPLAYSURF)
+    levels.bulletList.draw(constants.DISPLAYSURF)
 
-    bullet.test.drawHitbox()
     chara.player.drawHitbox()
 
     levels.displayHighscoreCounter()
