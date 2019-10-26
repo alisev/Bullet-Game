@@ -22,9 +22,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AvoidBullets.py" />
-    <Compile Include="class1.py">
+    <Compile Include="chara.py" />
+    <Compile Include="constants.py" />
+    <Compile Include="bullet.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="entity.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="levels.py">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
