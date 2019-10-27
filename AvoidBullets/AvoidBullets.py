@@ -111,22 +111,4 @@ while not done and gameEnd == False:
     pygame.display.update()
     clock.tick(constants.FPS)
 
-# -- Gameover loop --
-while not done and gameEnd:
-    #Event handling
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            done = True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                print('TODO: Return to menu')
-
-    #Game Logic
-
-    # Refresh screen
-    constants.DISPLAYSURF.fill(constants.BGCOLOR)
-
-    #Drawing code
-
-
 pygame.quit()
