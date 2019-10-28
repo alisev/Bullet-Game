@@ -88,7 +88,7 @@ while not done and gameEnd == False:
                 chara.player.moveX(0)
             elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 chara.player.moveY(0)
-
+    
     # Game logic
     chara.player.recalcPos()
     levels.callLevel()
@@ -103,7 +103,7 @@ while not done and gameEnd == False:
     levels.displayHighscoreCounter()
     chara.displayLives()
 
-    pygame.display.update()
     clock.tick(constants.FPS)
+    pygame.display.update()
 
 pygame.quit()

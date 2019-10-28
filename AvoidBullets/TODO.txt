@@ -1,17 +1,6 @@
 THINGS OF UPMOST IMPORTANCE RIGHT NOW:
-- level_1.py
-	- move all bulletLists into one array, where each group is an array element
-	- rewrite functions that call movement and preparation functions. They should use for cycle
-		- for group in bulletLists: movement(group, i)
-		- for i in range(len(bulletLists)): movement(bulletlists[i], i)
-	- level 1 uses 8 - 10 rows
-	- make sure it is possible to beat the level without losing a life
-	- adjust player and meteor speed accordingly
-		- maybe implement player slow down if shift is held?
 - Create a new player sprite design (thinner ship)
 	- Adjust hitbox accordingly
-
-
 
 
 TO DO list: IMPORTANT THINGS
@@ -113,3 +102,7 @@ LEVEL IMPLEMENTATIOMN:
  - Each level has several 'acts'
  - Acts change when all bullets and enemies from before are gone (self.kill)
  - BEfore each act sprite group is initialized
+
+NOTES:
+- In level_1.py:
+	- Creating bulletLists by using command 'bulletLists = [pygame.sprites.Group()] * rows' caused the game to go as many times as fast as there were rows declared.
