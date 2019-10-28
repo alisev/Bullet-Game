@@ -14,25 +14,11 @@ class Bullet(entity.Entity):
     def __init__(self, img):
         super().__init__(img)
 
-    def recalcPos(self, x=0, y=0):
-        # TODO probably not needed anymore
-        '''
-            Moves bullet in x direction as long as the bullet is 'active'.
-        '''
-        if self.isActive:
-            move_x = x * self.speed
-            move_y = y * self.speed
-            self.move(move_x, move_y)
-            self.updateHitbox()
-
     def collide(self, character):
         '''
             Checks if the bullet has collided with a character object.
             This method checks if bullet's and character's hitboxes are overlapping.
         '''
-        if self.isActive == False:
-            return
-
         x_min1 = self.hitbox[0]
         x_max1 = self.hitbox[0] + self.hitbox[2]
         x_min2 = character.hitbox[0]
@@ -57,6 +43,7 @@ class Bullet(entity.Entity):
             character.gotHit()
             self.remove()
 
+# Functions that are used to create each type of bullet
 def makeMeteor(pos_x, pos_y):
     image = pygame.image.load("sprites\\meteor.png").convert_alpha()
     meteor = Bullet(image)

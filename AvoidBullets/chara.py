@@ -42,7 +42,7 @@ class Character(entity.Entity):
         self.move(self.move_x, self.move_y)
         if self.isPlayer:
             self.checkBounds()
-        self.hitbox = (self.rect.x, self.rect.y, self.width, self.height)
+        self.updateHitbox()
 
     def checkBounds(self):
         '''
@@ -67,14 +67,12 @@ class Character(entity.Entity):
         print(self.name, 'got hit')
         self.lives = self.lives - 1
         if self.lives == 0:
-            # TODO add code that removes enemy and shows game over screen to the player
             if self.isPlayer:
-                # Calls GAME OVER
+                # TODO Calls GAME OVER
                 pass
             else:
                 # Removes character from screen
                 self.remove()
-                self.isActive = False
             print(self.name, 'has died')
 
 # Player character data
