@@ -1,7 +1,6 @@
 import pygame
 import constants
-import bullet
-from chara import player
+import level_1
 
 '''
     Contains functions for highscores and levels.
@@ -10,10 +9,6 @@ from chara import player
 
 highscore = 0
 lvl = 0 # Counting starts from 0
-levelStarted = False # When false, does preparations before starting any level.
-bulletList = pygame.sprite.Group()
-enemyList = pygame.sprite.Group()
-allSpriteList = pygame.sprite.Group()
 
 def callLevel():
     '''
@@ -23,43 +18,10 @@ def callLevel():
 
         More levels can be added later.
     '''
-    global levelStarted
+    global lvl
 
     if lvl == 0:
-        if not levelStarted:
-            count = 8
-            for i in range(count):
-                # Creates a meteor object
-                x = 100 + (constants.SCREEN_X-200)/(count + 1) * i
-                y = 0
-                meteor = bullet.makeMeteor(x, y)
-
-                # Places inside the list
-                bulletList.add(meteor)
-                allSpriteList.add(meteor)
-            levelStarted = True
-        meteorShower(8, 3, True)
-
-def meteorShower(count, speed_y, moveLeft = True):
-    global lvl
-    speed_x = 1
-
-    for obj in bulletList:
-        if moveLeft:
-            obj.rect.x = obj.rect.x + speed_x
-        else:
-            obj.rect.x = obj.rect.x - speed_x
-        obj.hitbox = (obj.rect.x, obj.rect.y, obj.width, obj.height)
-        obj.rect.y = obj.rect.y + speed_y
-        # Checks if meteor hasn't gone offscreen
-        hasCollided = obj.collide(player)
-        if not hasCollided:
-            highscoreCounter(1)
-        if obj.rect.y > constants.SCREEN_Y:
-            obj.remove()
-
-    if len(bulletList)==0:
-        lvl = lvl + 1
+        lvl = level_1.update(lvl)
 
 def highscoreCounter(pts):
     '''
