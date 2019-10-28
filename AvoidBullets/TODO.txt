@@ -1,3 +1,8 @@
+THINGS OF UPMOST IMPORTANCE RIGHT NOW:
+- Create a new player sprite design (thinner ship)
+	- Adjust hitbox accordingly
+
+
 TO DO list: IMPORTANT THINGS
 - Lives
 	- Function that calls Gameover screen, when player dies
@@ -97,3 +102,7 @@ LEVEL IMPLEMENTATIOMN:
  - Each level has several 'acts'
  - Acts change when all bullets and enemies from before are gone (self.kill)
  - BEfore each act sprite group is initialized
+
+NOTES:
+- In level_1.py:
+	- Creating bulletLists by using command 'bulletLists = [pygame.sprites.Group()] * rows' caused the game to go as many times as fast as there were rows declared.

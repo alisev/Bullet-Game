@@ -1,7 +1,6 @@
 import pygame
 import constants
-import bullet
-from chara import player
+import level_1
 
 '''
     Contains functions for highscores and levels.
@@ -10,11 +9,6 @@ from chara import player
 
 highscore = 0
 lvl = 0 # Counting starts from 0
-phase = 0
-bulletList = pygame.sprite.Group()
-enemyList = pygame.sprite.Group()
-allSpriteList = pygame.sprite.Group()
-phaseStart = False # If false, then make preparations before starting the phase
 
 def callLevel():
     '''
@@ -24,58 +18,10 @@ def callLevel():
 
         More levels can be added later.
     '''
+    global lvl
+
     if lvl == 0:
-        level_1()
-
-def level_1():
-    # move all actions to phases
-    def phase_1(count, speed_y, moveLeft = True):
-        global phaseStart
-        global phase
-        # Checks if preparations are needed or not
-        if phaseStart:
-            speed_x = ((constants.SCREEN_X-200) * speed_y)/(constants.SCREEN_Y * (count + 1))
-
-            for obj in bulletList:
-                if moveLeft:
-                    obj.rect.x = obj.rect.x + speed_x
-                else:
-                    obj.rect.x = obj.rect.x - speed_x
-                obj.hitbox = (obj.rect.x, obj.rect.y, obj.width, obj.height)
-                obj.rect.y = obj.rect.y + speed_y
-                # Checks if meteor hasn't gone offscreen
-                hasCollided = obj.collide(player)
-                if not hasCollided:
-                    highscoreCounter(1)
-                if obj.rect.y > constants.SCREEN_Y:
-                    obj.remove()
-
-            if len(bulletList)==0:
-                phase = phase + 1
-
-        else:
-            # Creates lists of enemies and bullets
-            arr = []
-            for i in range(count):
-                # Creates a meteor object
-                image = pygame.image.load("sprites\\meteor.png").convert_alpha()
-                meteor = bullet.Bullet(image)
-                meteor.name = "Meteor"
-                meteor.width = 24
-                meteor.height = 24
-                meteor.rect.x = 100 + (constants.SCREEN_X-200)/(count + 1) * i
-                meteor.rect.y = 0
-
-                # Places inside the list
-                arr.append(meteor)
-                bulletList.add(arr[i])
-                allSpriteList.add(arr[i])
-            phaseStart = True
-
-    if phase == 0:
-        phase_1(4, 5, True)
-    elif phase == 1:
-        pass
+        lvl = level_1.update(lvl)
 
 def highscoreCounter(pts):
     '''
@@ -138,3 +84,10 @@ def displayHighscoreCounter():
     y_pos = 20
     score = font.render(str(highscore), False, constants.YELLOW)
     constants.DISPLAYSURF.blit(score, [x_pos, y_pos])
+
+def collissionAndBounds(obj, pts):
+    hasCollided = obj.collide(player)
+    if not hasCollided:
+        highscoreCounter(pts)
+    if obj.rect.y > constants.SCREEN_Y:
+        obj.remove()

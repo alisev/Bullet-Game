@@ -7,6 +7,7 @@ import constants
 import chara
 import bullet
 import levels
+import level_1
 
 # --Essentals for game running--
 pygame.init()
@@ -73,7 +74,6 @@ while not done and gameEnd == False:
             done = True
 
         elif event.type == pygame.KEYDOWN:
-            print("User pressed a key")
             if event.key == pygame.K_LEFT:
                 chara.player.moveX(-1)
             elif event.key == pygame.K_RIGHT:
@@ -84,49 +84,26 @@ while not done and gameEnd == False:
                 chara.player.moveY(1)
 
         elif event.type == pygame.KEYUP:
-            print("User let go of a key")
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 chara.player.moveX(0)
             elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 chara.player.moveY(0)
-
+    
     # Game logic
     chara.player.recalcPos()
     levels.callLevel()
-    # recalc pos for all sprites
-    # test for collissions
 
     # Refresh screen
     constants.DISPLAYSURF.fill(constants.BGCOLOR)
 
     # Drawing code
     chara.spriteList.draw(constants.DISPLAYSURF)
-    levels.bulletList.draw(constants.DISPLAYSURF)
-
-    chara.player.drawHitbox()
+    level_1.allBullets.draw(constants.DISPLAYSURF)
 
     levels.displayHighscoreCounter()
     chara.displayLives()
 
-    pygame.display.update()
     clock.tick(constants.FPS)
-
-# -- Gameover loop --
-while not done and gameEnd:
-    #Event handling
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            done = True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                print('TODO: Return to menu')
-
-    #Game Logic
-
-    # Refresh screen
-    constants.DISPLAYSURF.fill(constants.BGCOLOR)
-
-    #Drawing code
-
+    pygame.display.update()
 
 pygame.quit()

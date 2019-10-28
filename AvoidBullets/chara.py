@@ -98,14 +98,6 @@ def displayLives():
     lives = font.render('Lives: ' + str(player.lives), False, constants.YELLOW)
     constants.DISPLAYSURF.blit(lives, [20, 20])
 
-# Test enemy character data
-test = Character(ship)
-test.name = "Test enemy"
-test.width = 24
-test.height = 24
-test.speed = 3
-test.color = constants.YELLOW
-
 # List of each character
 spriteList = pygame.sprite.Group()
 spriteList.add(player)

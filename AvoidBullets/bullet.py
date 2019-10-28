@@ -15,6 +15,7 @@ class Bullet(entity.Entity):
         super().__init__(img)
 
     def recalcPos(self, x=0, y=0):
+        # TODO probably not needed anymore
         '''
             Moves bullet in x direction as long as the bullet is 'active'.
         '''
@@ -22,7 +23,7 @@ class Bullet(entity.Entity):
             move_x = x * self.speed
             move_y = y * self.speed
             self.move(move_x, move_y)
-            self.hitbox = (self.rect.x, self.rect.y, self.width, self.height)
+            self.updateHitbox()
 
     def collide(self, character):
         '''
@@ -56,20 +57,14 @@ class Bullet(entity.Entity):
             character.gotHit()
             self.remove()
 
-image = pygame.image.load("sprites\\ship.png").convert_alpha()
-test = Bullet(image)
-test.name = "Test enemy"
-test.width = 24
-test.height = 24
-test.speed = 3
-test.color = constants.YELLOW
-
-image = pygame.image.load("sprites\\meteor.png").convert_alpha()
-meteor = Bullet(image)
-meteor.name = "Meteor"
-meteor.width = 24
-meteor.height = 24
-
-spriteList = pygame.sprite.Group()
-spriteList.add(test)
-
+def makeMeteor(pos_x, pos_y):
+    image = pygame.image.load("sprites\\meteor.png").convert_alpha()
+    meteor = Bullet(image)
+    meteor.name = "Meteor"
+    meteor.width = 16
+    meteor.height = 16
+    meteor.hb_offset_x = 4
+    meteor.hb_offset_y = 4
+    meteor.rect.x = pos_x
+    meteor.rect.y = pos_y
+    return meteor
