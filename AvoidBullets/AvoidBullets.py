@@ -5,9 +5,7 @@
 import pygame
 import constants
 import chara
-import bullet
 import levels
-import level_1
 
 # --Essentals for game running--
 pygame.init()
@@ -98,7 +96,7 @@ while not done and gameEnd == False:
 
     # Drawing code
     chara.spriteList.draw(constants.DISPLAYSURF)
-    level_1.allBullets.draw(constants.DISPLAYSURF)
+    levels.draw()
 
     levels.displayHighscoreCounter()
     chara.displayLives()

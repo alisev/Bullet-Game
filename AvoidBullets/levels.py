@@ -1,6 +1,7 @@
 import pygame
 import constants
 import level_1
+import level_2
 
 '''
     Contains functions for highscores and levels.
@@ -8,7 +9,7 @@ import level_1
 '''
 
 highscore = 0
-lvl = 0 # Counting starts from 0
+lvl = 0
 
 def callLevel():
     '''
@@ -22,6 +23,14 @@ def callLevel():
 
     if lvl == 0:
         lvl = level_1.update(lvl)
+    if lvl == 1:
+        lvl = level_2.update(lvl)
+
+def draw():
+    if lvl == 0:
+        level_1.draw()
+    elif lvl == 1:
+        level_2.draw()
 
 def highscoreCounter(pts):
     '''
