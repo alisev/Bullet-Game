@@ -13,6 +13,7 @@ class Character(entity.Entity):
             move_x, move_y  Character's movement "vectors". Value usually switches between -1, 0 and 1. When value is -1 or 1 the character is moving across the screen, when 0 - it is still
             lives           Number of lives a character has. Each character has 1 life by default.
             isPlayer        Defines if character is the player
+            children        Bullet sprite group
     '''
     def __init__(self, img):
         super().__init__(img)
@@ -20,6 +21,7 @@ class Character(entity.Entity):
         self.move_y = 0
         self.lives = 1
         self.isPlayer = False
+        self.children = None
 
     def moveX(self, x=0):
         '''
@@ -83,7 +85,7 @@ player.rect.x = constants.SCREEN_X / 2 - 12
 player.rect.y = constants.SCREEN_Y / 6 * 5
 player.width = 32
 player.height = 24
-player.speed = 3
+player.speed = 6
 player.lives = 3
 player.isPlayer = True
 
@@ -99,3 +101,16 @@ def displayLives():
 # List of each character
 spriteList = pygame.sprite.Group()
 spriteList.add(player)
+
+def makeBallUFO(pos_x, pos_y):
+    image = pygame.image.load("sprites\\ballUFO.png").convert_alpha()
+    enemy = Character(image)
+    enemy.name = "Ball UFO"
+    enemy.rect.x = pos_x
+    enemy.rect.y = pos_y
+    enemy.width = 17
+    enemy.height = 17
+    enemy.hb_offset_x = 4
+    enemy.hb_offset_y = 4
+    enemy.children = pygame.sprite.Group()
+    return enemy

@@ -33,6 +33,9 @@
     <Compile Include="levels.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="levelUtil.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="level_1.py">
       <SubType>Code</SubType>
     </Compile>

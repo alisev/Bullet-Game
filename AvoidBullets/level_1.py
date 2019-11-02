@@ -2,18 +2,19 @@ import pygame
 import constants
 import bullet
 from chara import player
+from levelUtil import isGroupEmpty
 
-rows = 8
+rows = 4
 countPerRow = 9
 count = countPerRow * rows
 
-speed_x = 2
-speed_y = 3
+speed_x = 4
+speed_y = 8
 
 bulletLists = []
 for i in range(rows):
     bulletLists.append(pygame.sprite.Group())
-allBullets = pygame.sprite.Group()
+allSprites = pygame.sprite.Group()
 
 isPrepared = False
 
@@ -32,7 +33,7 @@ def prepare(group, a):
             x = constants.SCREEN_X/(countPerRow - 1) * i
         meteor = bullet.makeMeteor(x, y)
         group.add(meteor)
-        allBullets.add(meteor)
+        allSprites.add(meteor)
     isPrepared = True
 
 def update(lvl):
@@ -49,9 +50,7 @@ def update(lvl):
         moveRight = True if (i % 2 == 0) else False # Every other row moves left
         movement(bulletLists[i], moveRight)
 
-    if len(allBullets)==0:
-        return lvl + 1
-    return lvl
+    return isGroupEmpty(allSprites, lvl)
 
 def movement(group, moveRight):
     '''
@@ -81,4 +80,4 @@ def draw():
     '''
         Draws all bullets.
     '''
-    allBullets.draw(constants.DISPLAYSURF)
+    allSprites.draw(constants.DISPLAYSURF)

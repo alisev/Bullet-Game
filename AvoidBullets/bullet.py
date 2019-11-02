@@ -46,12 +46,57 @@ class Bullet(entity.Entity):
 # Functions that are used to create each type of bullet
 def makeMeteor(pos_x, pos_y):
     image = pygame.image.load("sprites\\meteor.png").convert_alpha()
-    meteor = Bullet(image)
-    meteor.name = "Meteor"
-    meteor.width = 16
-    meteor.height = 16
-    meteor.hb_offset_x = 4
-    meteor.hb_offset_y = 4
-    meteor.rect.x = pos_x
-    meteor.rect.y = pos_y
-    return meteor
+    bullet = Bullet(image)
+    bullet.name = "Meteor"
+    bullet.width = 16
+    bullet.height = 16
+    bullet.hb_offset_x = 4
+    bullet.hb_offset_y = 4
+    bullet.rect.x = pos_x
+    bullet.rect.y = pos_y
+    return bullet
+
+def makeBigBall(pos_x, pos_y):
+    image = pygame.image.load("sprites\\ball1.png").convert_alpha()
+    bullet = Bullet(image)
+    bullet.name = "Meteor"
+    bullet.width = 11
+    bullet.height = 11
+    bullet.hb_offset_x = 2
+    bullet.hb_offset_y = 2
+    bullet.rect.x = pos_x
+    bullet.rect.y = pos_y
+
+    bullet.angle = 0
+    bullet.radius = 30
+    return bullet
+
+def makeMediumBall(pos_x, pos_y):
+    image = pygame.image.load("sprites\\ball2.png").convert_alpha()
+    bullet = Bullet(image)
+    bullet.name = "Meteor"
+    bullet.width = 8
+    bullet.height = 8
+    bullet.hb_offset_x = 1
+    bullet.hb_offset_y = 1
+    bullet.rect.x = pos_x
+    bullet.rect.y = pos_y
+
+    bullet.angle = 0
+    bullet.radius = 50
+    return bullet
+
+def makeSmallBall(pos_x, pos_y):
+    image = pygame.image.load("sprites\\ball3.png").convert_alpha()
+    bullet = Bullet(image)
+    bullet.name = "Meteor"
+    bullet.width = 5
+    bullet.height = 5
+    bullet.hb_offset_x = 1
+    bullet.hb_offset_y = 1
+    bullet.rect.x = pos_x
+    bullet.rect.y = pos_y
+
+    bullet.angle = 0
+    bullet.radius = 80
+    return bullet
