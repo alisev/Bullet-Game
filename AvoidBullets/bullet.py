@@ -59,11 +59,11 @@ def makeMeteor(pos_x, pos_y):
 def makeBigBall(pos_x, pos_y):
     image = pygame.image.load("sprites\\ball1.png").convert_alpha()
     bullet = Bullet(image)
-    bullet.name = "Meteor"
-    bullet.width = 11
-    bullet.height = 11
-    bullet.hb_offset_x = 2
-    bullet.hb_offset_y = 2
+    bullet.name = "Small generic bullet"
+    bullet.width = 22
+    bullet.height = 22
+    bullet.hb_offset_x = 4
+    bullet.hb_offset_y = 4
     bullet.rect.x = pos_x
     bullet.rect.y = pos_y
 
@@ -74,11 +74,11 @@ def makeBigBall(pos_x, pos_y):
 def makeMediumBall(pos_x, pos_y):
     image = pygame.image.load("sprites\\ball2.png").convert_alpha()
     bullet = Bullet(image)
-    bullet.name = "Meteor"
-    bullet.width = 8
-    bullet.height = 8
-    bullet.hb_offset_x = 1
-    bullet.hb_offset_y = 1
+    bullet.name = "Medium generic bullet"
+    bullet.width = 16
+    bullet.height = 16
+    bullet.hb_offset_x = 2
+    bullet.hb_offset_y = 2
     bullet.rect.x = pos_x
     bullet.rect.y = pos_y
 
@@ -89,14 +89,14 @@ def makeMediumBall(pos_x, pos_y):
 def makeSmallBall(pos_x, pos_y):
     image = pygame.image.load("sprites\\ball3.png").convert_alpha()
     bullet = Bullet(image)
-    bullet.name = "Meteor"
-    bullet.width = 5
-    bullet.height = 5
-    bullet.hb_offset_x = 1
-    bullet.hb_offset_y = 1
+    bullet.name = "Big generic bullet"
+    bullet.width = 10
+    bullet.height = 10
+    bullet.hb_offset_x = 2
+    bullet.hb_offset_y = 2
     bullet.rect.x = pos_x
     bullet.rect.y = pos_y
 
     bullet.angle = 0
-    bullet.radius = 80
+    bullet.radius = 160
     return bullet

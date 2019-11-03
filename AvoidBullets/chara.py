@@ -108,9 +108,22 @@ def makeBallUFO(pos_x, pos_y):
     enemy.name = "Ball UFO"
     enemy.rect.x = pos_x
     enemy.rect.y = pos_y
-    enemy.width = 17
-    enemy.height = 17
-    enemy.hb_offset_x = 4
-    enemy.hb_offset_y = 4
+    enemy.width = 34
+    enemy.height = 34
+    enemy.hb_offset_x = 8
+    enemy.hb_offset_y = 8
+    enemy.children = pygame.sprite.Group()
+    return enemy
+
+def makeBug(pos_x, pos_y):
+    image = pygame.image.load("sprites\\bug.png").convert_alpha()
+    enemy = Character(image)
+    enemy.name = "Bug alien"
+    enemy.rect.x = pos_x
+    enemy.rect.y = pos_y
+    enemy.width = 52
+    enemy.height = 52
+    enemy.hb_offset_x = 10
+    enemy.hb_offset_y = 10
     enemy.children = pygame.sprite.Group()
     return enemy
