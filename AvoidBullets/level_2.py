@@ -27,21 +27,24 @@ def prepare(it, a):
     '''
     global isPrepared
 
-    x = constants.SCREEN_X/(col + 1) * (a + 1)
-    y = 0
-    for i in range(countPerCol):
-        y = y - 120 * i # TODO Change to minus
-        ufo = chara.makeBallUFO(x, y)
-        UFOLists[it].add(ufo)
-        # TODO use loop here
-        allSprites.add(ufo)
-        for j in range(3):
-            pos_x = x
-            pos_y = y + 5 + 2 * j
-            makeBall = [bullet.makeBigBall, bullet.makeMediumBall, bullet.makeSmallBall]
-            ball = makeBall[j](pos_x, pos_y)
-            ufo.children.add(ball)
-            allSprites.add(ball)
+    x = [100, constants.SCREEN_X - 100 - 50]
+    y = 101
+
+    for i in range(col):
+        for j in range(countPerCol):
+            y = y - 120 if j > 0 else 0
+            ufo = chara.makeBallUFO(x[i], y)
+            for k in range(5):
+                angle = 0
+                if i == 0:
+                    angle = -60 + 30 * k
+                else:
+                    angle = -120 - 30 * k
+                ball = bullet.makeSmallBall(x[i] + 25, y + 25, angle, 0)
+                ufo.children.add(ball)
+                allSprites.add(ball)
+            UFOLists[i].add(ufo)
+            allSprites.add(ufo)
     isPrepared = True
 
 def update(lvl):
@@ -61,29 +64,22 @@ def update(lvl):
 
 def moveUFO (group):
     for ufo in group:
-        moveDown(ufo)
-        counter = 0
+        levelUtil.moveDown(ufo, speed_y)
         for ball in ufo.children:
-            moveDown(ball)
-            if ufo.rect.y < 100:
-                levelUtil.orbit(ball, ufo.rect.x + 25, ufo.rect.y + 25, 0.05, counter)
+            if ball.rect.y > 100:
+                levelUtil.explode(ball, ufo.rect.x + 25, ufo.rect.y + 25, 5)
             else:
-                levelUtil.explode(ball, ufo.rect.x + 25, ufo.rect.y + 25, 3)
+                levelUtil.moveDown(ball, speed_y)
 
             ball.collide(chara.player)
 
             if ball.rect.x < -50 or ball.rect.x > constants.SCREEN_X + 50 or ball.rect.y > constants.SCREEN_Y + 50:
                 ball.remove()
 
-            counter = counter + 1
         if ufo.rect.y > constants.SCREEN_Y + 50:
             for ball in ufo.children:
                 ball.remove()
             ufo.remove()
-
-def moveDown(item):
-    item.rect.y = item.rect.y + speed_y
-    item.updateHitbox()
 
 def draw():
     '''

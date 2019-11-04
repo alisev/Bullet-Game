@@ -125,5 +125,4 @@ def makeBug(pos_x, pos_y):
     enemy.height = 52
     enemy.hb_offset_x = 10
     enemy.hb_offset_y = 10
-    enemy.children = pygame.sprite.Group()
     return enemy

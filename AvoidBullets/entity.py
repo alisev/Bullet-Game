@@ -40,8 +40,8 @@ class Entity(pygame.sprite.Sprite):
             Recalculates entity's position on screen.
             move_x, move_y - Variables, which define how much the entity has moved.
         '''
-        self.rect.x = self.rect.x + move_x
-        self.rect.y = self.rect.y + move_y
+        self.rect.x += move_x
+        self.rect.y += move_y
 
     def updateHitbox(self):
         '''
@@ -55,4 +55,3 @@ class Entity(pygame.sprite.Sprite):
         '''
         self.kill()
         self.hitbox = (0,0,0,0)
-        self.isActive = False

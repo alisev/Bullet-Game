@@ -67,7 +67,7 @@ def movement(group, moveRight):
         elif obj.rect.x > constants.SCREEN_X + 50:
             obj.rect.x = -50
 
-        obj.rect.y = obj.rect.y + speed_y
+        obj.rect.y += speed_y
 
         obj.updateHitbox()
 
