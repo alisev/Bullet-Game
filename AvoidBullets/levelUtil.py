@@ -1,6 +1,32 @@
 import constants
+import pygame
 import math
 from chara import player
+
+'''
+    Contains methods that can be used in any level
+'''
+
+allSprites = pygame.sprite.Group()
+bulletLists = []
+enemyLists = []
+
+def createSpriteList(n):
+    '''
+        Creates sprite group arrays. Used for bulletLists and enemyLists
+    '''
+    array = []
+    for i in range(n):
+        array.append(pygame.sprite.Group())
+    return array
+
+def clearSpriteLists():
+    '''
+        Ensures that all sprite lists are empty, before starting next level.
+    '''
+    allSprites.empty()
+    bulletLists.clear()
+    enemyLists.clear()
 
 def draw(group):
     '''
@@ -40,13 +66,6 @@ def explode(obj, center_x, center_y, speed):
     calcCircular(obj, center_x, center_y)
     obj.updateHitbox()
 
-def moveDown(obj, speed):
-    '''
-        Moves sprite straight down
-    '''
-    obj.rect.y += speed
-    obj.updateHitbox()
-
 def getPlayerPos(obj):
     '''
         Returns the angle of the vector, that connects bullet and the player
@@ -66,3 +85,10 @@ def checkBounds(obj, min):
     if obj.rect.x > constants.SCREEN_X or obj.rect.x < -min or obj.rect.y > constants.SCREEN_Y or obj.rect.y < -min:
         obj.remove()
 
+def checkBounds_Y(obj):
+    '''
+        Checks if sprite has gone out of Y bounds
+        min - sprite's width. Ensures that sprite isn't visible onscreen
+    '''
+    if obj.rect.y > constants.SCREEN_Y:
+        obj.remove()

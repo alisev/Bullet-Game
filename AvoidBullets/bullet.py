@@ -43,6 +43,13 @@ class Bullet(entity.Entity):
             character.gotHit()
             self.remove()
 
+    def remove(self):
+        '''
+            Removes entity from screen.
+        '''
+        self.kill()
+        self.hitbox = (0,0,0,0)
+
 # Functions that are used to create each type of bullet
 def makeMeteor(pos_x, pos_y):
     image = pygame.image.load("sprites\\meteor.png").convert_alpha()
@@ -100,4 +107,16 @@ def makeSmallBall(pos_x, pos_y, a, variant):
 
     bullet.angle = a
     bullet.radius = 0
+    return bullet
+
+def makeBullet(pos_x, pos_y):
+    image = pygame.image.load("sprites\\ship_bullet.png").convert_alpha()
+    bullet = Bullet(image)
+    bullet.name = "Player's bullet"
+    bullet.width = 3
+    bullet.height = 10
+    bullet.hb_offset_x = 0
+    bullet.hb_offset_y = 0
+    bullet.rect.x = pos_x
+    bullet.rect.y = pos_y
     return bullet

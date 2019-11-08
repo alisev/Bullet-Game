@@ -1,6 +1,7 @@
 import pygame
 import constants
 import entity
+import bullet
 
 '''
     Defines character class and objects.
@@ -62,6 +63,16 @@ class Character(entity.Entity):
         elif self.rect.y < 0:
             self.rect.y = 0
 
+    def remove(self):
+        '''
+            Removes entity from screen.
+        '''
+        self.kill()
+        if self.children != None:
+            for child in self.children:
+                child.kill()
+        self.hitbox = (0,0,0,0)
+
     def gotHit(self):
         '''
             When character is hit by a bullet, it loses life points.
@@ -73,7 +84,6 @@ class Character(entity.Entity):
                 # TODO Calls GAME OVER
                 pass
             else:
-                # Removes character from screen
                 self.remove()
             print(self.name, 'has died')
 
@@ -88,6 +98,7 @@ player.height = 24
 player.speed = 6
 player.lives = 3
 player.isPlayer = True
+player.children = pygame.sprite.Group()
 
 # Player specific function
 def displayLives():
@@ -125,4 +136,14 @@ def makeBug(pos_x, pos_y):
     enemy.height = 52
     enemy.hb_offset_x = 10
     enemy.hb_offset_y = 10
+    enemy.lives = 25
+    enemy.children = pygame.sprite.Group()
     return enemy
+
+def playerShoot():
+    '''
+        Creates a bullet whenever player shoots
+    '''
+    blt = bullet.makeBullet(player.rect.x + 16, player.rect.y)
+    player.children.add(blt)
+    spriteList.add(blt)

@@ -80,6 +80,8 @@ while not done and gameEnd == False:
                 chara.player.moveY(-1)
             elif event.key == pygame.K_DOWN:
                 chara.player.moveY(1)
+            elif event.key == pygame.K_z:
+                chara.playerShoot()
 
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -89,6 +91,7 @@ while not done and gameEnd == False:
     
     # Game logic
     chara.player.recalcPos()
+    levels.playerBulletsMove()
     levels.callLevel()
 
     # Refresh screen

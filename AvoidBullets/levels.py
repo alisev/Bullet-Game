@@ -3,10 +3,11 @@ import constants
 import level_1
 import level_2
 import level_3
+import chara
+import levelUtil
 
 '''
-    Contains functions for highscores and levels.
-    TODO Test all these functions.
+    Contains game logic that isn't specific to any level
 '''
 
 highscore = 0
@@ -27,7 +28,7 @@ def callLevel():
 
 def draw():
     if lvl < len(levelList):
-        levelList[lvl].draw()
+        levelUtil.draw(levelUtil.allSprites)
     else:
         # TODO call gamewin draw function
         pass
@@ -86,3 +87,12 @@ def displayHighscoreCounter():
     y_pos = 20
     score = font.render(str(highscore), False, constants.YELLOW)
     constants.DISPLAYSURF.blit(score, [x_pos, y_pos])
+
+def playerBulletsMove():
+    for blt in chara.player.children:
+        blt.move(0, -5)
+        if lvl < len(levelList):
+            for list in levelUtil.enemyLists:
+                for enemy in list:
+                    blt.collide(enemy)
+        levelUtil.checkBounds(blt, 10)

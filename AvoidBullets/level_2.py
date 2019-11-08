@@ -11,11 +11,6 @@ countPerCol = 5
 
 speed_y = 5
 
-UFOLists = []
-for i in range(col):
-    UFOLists.append(pygame.sprite.Group())
-allSprites = pygame.sprite.Group()
-
 isPrepared = False
 
 def prepare(it, a):
@@ -26,6 +21,10 @@ def prepare(it, a):
         (it == a)
     '''
     global isPrepared
+
+    levelUtil.clearSpriteLists()
+    levelUtil.bulletLists = levelUtil.createSpriteList(1)
+    levelUtil.enemyLists = levelUtil.createSpriteList(col)
 
     x = [100, constants.SCREEN_X - 100 - 50]
     y = 101
@@ -42,9 +41,10 @@ def prepare(it, a):
                     angle = -120 - 30 * k
                 ball = bullet.makeSmallBall(x[i] + 25, y + 25, angle, 0)
                 ufo.children.add(ball)
-                allSprites.add(ball)
-            UFOLists[i].add(ufo)
-            allSprites.add(ufo)
+                # levelUtil.bulletLists[0].add(ball) # TODO Evaluate if this is really necessary
+                levelUtil.allSprites.add(ball)
+            levelUtil.enemyLists[i].add(ufo)
+            levelUtil.allSprites.add(ufo)
     isPrepared = True
 
 def update(lvl):
@@ -58,18 +58,18 @@ def update(lvl):
             prepare(i, i)
     
     for i in range(col):
-        moveUFO(UFOLists[i])
+        moveUFO(levelUtil.enemyLists[i])
 
-    return levelUtil.isGroupEmpty(allSprites, lvl)
+    return levelUtil.isGroupEmpty(levelUtil.allSprites, lvl)
 
 def moveUFO (group):
     for ufo in group:
-        levelUtil.moveDown(ufo, speed_y)
+        ufo.move(0, speed_y)
         for ball in ufo.children:
             if ball.rect.y > 100:
                 levelUtil.explode(ball, ufo.rect.x + 25, ufo.rect.y + 25, 5)
             else:
-                levelUtil.moveDown(ball, speed_y)
+                ball.move(0, speed_y)
 
             ball.collide(chara.player)
 
@@ -81,11 +81,6 @@ def moveUFO (group):
                 ball.remove()
             ufo.remove()
 
-def draw():
-    '''
-        Draws all bullets.
-    '''
-    allSprites.draw(constants.DISPLAYSURF)
 
 
 
