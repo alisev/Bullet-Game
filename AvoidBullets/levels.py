@@ -2,35 +2,36 @@ import pygame
 import constants
 import level_1
 import level_2
+import level_3
+import chara
+import levelUtil
 
 '''
-    Contains functions for highscores and levels.
-    TODO Test all these functions.
+    Contains game logic that isn't specific to any level
 '''
 
 highscore = 0
 lvl = 0
+levelList = [level_1, level_2, level_3]
 
 def callLevel():
     '''
-        Calls the required level.
-        Each level calls certain functions that define what enemies appear and their behaviour.
-        They contain a couple of if conditions to check how far player is in the level and when the next enemy needs to be brought in.
-
-        More levels can be added later.
+        Calls the required level function. If player has beaten all levels, then a game win screen is shown.
     '''
     global lvl
 
-    if lvl == 0:
-        lvl = level_1.update(lvl)
-    if lvl == 1:
-        lvl = level_2.update(lvl)
+    if lvl < len(levelList):
+        lvl = levelList[lvl].update(lvl)
+    else:
+        # TODO switch to gamewin loop
+        pass
 
 def draw():
-    if lvl == 0:
-        level_1.draw()
-    elif lvl == 1:
-        level_2.draw()
+    if lvl < len(levelList):
+        levelUtil.draw(levelUtil.allSprites)
+    else:
+        # TODO call gamewin draw function
+        pass
 
 def highscoreCounter(pts):
     '''
@@ -41,13 +42,6 @@ def highscoreCounter(pts):
     highscore += pts
     if highscore > 99999999:
         highscore = 99999999 # Max score for now
-
-def advanceLevel():
-    '''
-        Increases level counter.
-    '''
-    global lvl
-    lvl += 1
 
 def saveHighscore():
     '''
@@ -94,9 +88,11 @@ def displayHighscoreCounter():
     score = font.render(str(highscore), False, constants.YELLOW)
     constants.DISPLAYSURF.blit(score, [x_pos, y_pos])
 
-def collissionAndBounds(obj, pts):
-    hasCollided = obj.collide(player)
-    if not hasCollided:
-        highscoreCounter(pts)
-    if obj.rect.y > constants.SCREEN_Y:
-        obj.remove()
+def playerBulletsMove():
+    for blt in chara.player.children:
+        blt.move(0, -5)
+        if lvl < len(levelList):
+            for list in levelUtil.enemyLists:
+                for enemy in list:
+                    blt.collide(enemy)
+        levelUtil.checkBounds(blt, 10)

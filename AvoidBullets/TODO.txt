@@ -6,12 +6,6 @@ THINGS OF UPMOST IMPORTANCE RIGHT NOW:
 TO DO list: IMPORTANT THINGS
 - Lives
 	- Function that calls Gameover screen, when player dies
-- Bullets
-	- Sprites for each
-	- Follows their enemy (set as a parent object basically)
-- Enemies
-	- Sprites
-	- Functions for their movement
 - Splash screen
 	- See the sketch for visual reference
 - Levels
@@ -91,12 +85,29 @@ IF I HAVE ENOUGH TIME FOR THIS:
 - Classes
 	- Make some class methods private if possible.
 
-LEVEL IMPLEMENTATIOMN:
- - There are several levels
- - Each level has several 'acts'
- - Acts change when all bullets and enemies from before are gone (self.kill)
- - BEfore each act sprite group is initialized
 
 NOTES:
 - In level_1.py:
 	- Creating bulletLists by using command 'bulletLists = [pygame.sprites.Group()] * rows' caused the game to go as many times as fast as there were rows declared.
+	- Correct way to call a function via dictionary (in order to avoid long if-elif-else lists) is dictionary = {i: function} and dictionary[i](arg)
+
+LEVEL IMPROVEMENTS:
+- Level 1:
+	- Meteors should be destroyable by shooting
+	- Upon being shot, meteors should play an animation of exploding
+- Level 2:
+	- If player collides with the ufos, player loses a life
+	- Better bullet patterns?
+- Level 3:
+	- If player collides with the bug, player loses a life
+	- Each row of bullets is loaded separately
+	- The bug has to be destroyed to finsih the level
+	- Upon destroying the bug, the bullets fly off on their own and then the level is finished
+	- Bug has a floating animation
+	- Bug's bullets are not attached to the bug itself (in bug.children)
+	- Bug has destroying animation
+- Point rewards for all levels:
+	- For completing the level
+	- For destroying enemies and in some cases - bullets
+- Finally implement Gamewin and Gameover screens with an option to replay the game
+- Center bullets in relation to the ship

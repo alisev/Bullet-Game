@@ -2,18 +2,13 @@ import pygame
 import constants
 import bullet
 from chara import player
+import levelUtil
 
-rows = 8
-countPerRow = 9
+rows = 3
+countPerRow = 5
 count = countPerRow * rows
 
-speed_x = 2
-speed_y = 3
-
-bulletLists = []
-for i in range(rows):
-    bulletLists.append(pygame.sprite.Group())
-allBullets = pygame.sprite.Group()
+speed = 10
 
 isPrepared = False
 
@@ -26,13 +21,21 @@ def prepare(group, a):
     global isPrepared
 
     x = 0
-    y = -120 * a
+    y = 0
     for i in range(countPerRow):
-        if countPerRow > 1: # Prevents division with 0
-            x = constants.SCREEN_X/(countPerRow - 1) * i
+        l = constants.SCREEN_X/(countPerRow * 2) # if SCREEN_X = 800 and countPerRow = 4, then l = 100
+        if a == 0:
+            x = l * (i - 4) # if i = 2, then x = -200
+            y = -l * i
+        elif a == 1:
+            x = constants.SCREEN_X + l * (i + 1) + l * countPerRow
+            y = l * (i - countPerRow + 1) - l * countPerRow
+        else:
+            x = l + l * i * 2
+            y = -800
         meteor = bullet.makeMeteor(x, y)
         group.add(meteor)
-        allBullets.add(meteor)
+        levelUtil.allSprites.add(meteor)
     isPrepared = True
 
 def update(lvl):
@@ -42,43 +45,19 @@ def update(lvl):
         lvl - current level
     '''
     if not isPrepared:
+        levelUtil.bulletLists = levelUtil.createSpriteList(rows)
         for i in range(rows):
-            prepare(bulletLists[i], i)
+            prepare(levelUtil.bulletLists[i], i)
     
     for i in range(rows):
-        moveRight = True if (i % 2 == 0) else False # Every other row moves left
-        movement(bulletLists[i], moveRight)
+        for obj in levelUtil.bulletLists[i]:
+            if i == 0:
+                obj.move(speed, speed)
+            elif i == 1:
+                obj.move(-speed, speed)
+            else:
+                obj.move(0, speed)
+            obj.collide(player)
+            levelUtil.checkBounds_Y(obj)
 
-    if len(allBullets)==0:
-        return lvl + 1
-    return lvl
-
-def movement(group, moveRight):
-    '''
-        Goes through all group's items, updates their position and removes sprites if it has collided or left the screen.
-        group - sprite group
-        moveRight - if True, all group's sprites are moving to the right side. Otherwise they would move left.
-    '''
-    for obj in group:
-        obj.rect.x = obj.rect.x + speed_x if moveRight else obj.rect.x - speed_x
-
-        # Reappears on the other side of the screen, if the bullet disappears in x direction
-        if obj.rect.x < -50:
-            obj.rect.x = constants.SCREEN_X + 50
-        elif obj.rect.x > constants.SCREEN_X + 50:
-            obj.rect.x = -50
-
-        obj.rect.y = obj.rect.y + speed_y
-
-        obj.updateHitbox()
-
-        obj.collide(player)
-
-        if obj.rect.y > constants.SCREEN_Y:
-            obj.remove()
-
-def draw():
-    '''
-        Draws all bullets.
-    '''
-    allBullets.draw(constants.DISPLAYSURF)
+    return levelUtil.isGroupEmpty(levelUtil.allSprites, lvl)

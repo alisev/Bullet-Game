@@ -1,38 +1,50 @@
 import pygame
+import math
 import constants
 import bullet
-from chara import player
+import chara
+import levelUtil
 
-rows = 8
-countPerRow = 9
-count = countPerRow * rows
+# UFO count
+col = 2
+countPerCol = 5
 
-speed_x = 2
-speed_y = 3
-
-bulletLists = []
-for i in range(rows):
-    bulletLists.append(pygame.sprite.Group())
-allBullets = pygame.sprite.Group()
+speed_y = 5
 
 isPrepared = False
 
-def prepare(group, a):
+def prepare(it, a):
     '''
         Prepares meteor groups, sprites and their start positions.
-        group - sprite group that is being prepared.
-        a - y position offset
+        it - array item's number, to which group belongs to
+        a - x position offset
+        (it == a)
     '''
     global isPrepared
 
-    x = 0
-    y = -120 * a
-    for i in range(countPerRow):
-        if countPerRow > 1: # Prevents division with 0
-            x = constants.SCREEN_X/(countPerRow - 1) * i
-        meteor = bullet.makeMeteor(x, y)
-        group.add(meteor)
-        allBullets.add(meteor)
+    levelUtil.clearSpriteLists()
+    levelUtil.bulletLists = levelUtil.createSpriteList(1)
+    levelUtil.enemyLists = levelUtil.createSpriteList(col)
+
+    x = [100, constants.SCREEN_X - 100 - 50]
+    y = 101
+
+    for i in range(col):
+        for j in range(countPerCol):
+            y = y - 120 if j > 0 else 0
+            ufo = chara.makeBallUFO(x[i], y)
+            for k in range(5):
+                angle = 0
+                if i == 0:
+                    angle = -60 + 30 * k
+                else:
+                    angle = -120 - 30 * k
+                ball = bullet.makeSmallBall(x[i] + 25, y + 25, angle, 0)
+                ufo.children.add(ball)
+                # levelUtil.bulletLists[0].add(ball) # TODO Evaluate if this is really necessary
+                levelUtil.allSprites.add(ball)
+            levelUtil.enemyLists[i].add(ufo)
+            levelUtil.allSprites.add(ufo)
     isPrepared = True
 
 def update(lvl):
@@ -42,43 +54,33 @@ def update(lvl):
         lvl - current level
     '''
     if not isPrepared:
-        for i in range(rows):
-            prepare(bulletLists[i], i)
+        for i in range(col):
+            prepare(i, i)
     
-    for i in range(rows):
-        moveRight = True if (i % 2 == 0) else False # Every other row moves left
-        movement(bulletLists[i], moveRight)
+    for i in range(col):
+        moveUFO(levelUtil.enemyLists[i])
 
-    if len(allBullets)==0:
-        return lvl + 1
-    return lvl
+    return levelUtil.isGroupEmpty(levelUtil.allSprites, lvl)
 
-def movement(group, moveRight):
-    '''
-        Goes through all group's items, updates their position and removes sprites if it has collided or left the screen.
-        group - sprite group
-        moveRight - if True, all group's sprites are moving to the right side. Otherwise they would move left.
-    '''
-    for obj in group:
-        obj.rect.x = obj.rect.x + speed_x if moveRight else obj.rect.x - speed_x
+def moveUFO (group):
+    for ufo in group:
+        ufo.move(0, speed_y)
+        for ball in ufo.children:
+            if ball.rect.y > 100:
+                levelUtil.explode(ball, ufo.rect.x + 25, ufo.rect.y + 25, 5)
+            else:
+                ball.move(0, speed_y)
 
-        # Reappears on the other side of the screen, if the bullet disappears in x direction
-        if obj.rect.x < -50:
-            obj.rect.x = constants.SCREEN_X + 50
-        elif obj.rect.x > constants.SCREEN_X + 50:
-            obj.rect.x = -50
+            ball.collide(chara.player)
 
-        obj.rect.y = obj.rect.y + speed_y
+            if ball.rect.x < -50 or ball.rect.x > constants.SCREEN_X + 50 or ball.rect.y > constants.SCREEN_Y + 50:
+                ball.remove()
 
-        obj.updateHitbox()
+        if ufo.rect.y > constants.SCREEN_Y + 50:
+            for ball in ufo.children:
+                ball.remove()
+            ufo.remove()
 
-        obj.collide(player)
 
-        if obj.rect.y > constants.SCREEN_Y:
-            obj.remove()
 
-def draw():
-    '''
-        Draws all bullets.
-    '''
-    allBullets.draw(constants.DISPLAYSURF)
+
