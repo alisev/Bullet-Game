@@ -1,5 +1,5 @@
 import constants
-import pygame
+import pygame as pg
 import math
 from chara import player
 
@@ -7,7 +7,7 @@ from chara import player
     Contains methods that can be used in any level
 '''
 
-allSprites = pygame.sprite.Group()
+allSprites = pg.sprite.Group()
 bulletLists = []
 enemyLists = []
 
@@ -17,7 +17,7 @@ def createSpriteList(n):
     '''
     array = []
     for i in range(n):
-        array.append(pygame.sprite.Group())
+        array.append(pg.sprite.Group())
     return array
 
 def clearSpriteLists():

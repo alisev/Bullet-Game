@@ -1,4 +1,4 @@
-import pygame
+import pygame as pg
 import constants
 import entity
 import bullet
@@ -88,7 +88,7 @@ class Character(entity.Entity):
             print(self.name, 'has died')
 
 # Player character data
-ship = pygame.image.load("sprites\\ship.png").convert_alpha()
+ship = pg.image.load("sprites\\ship.png").convert_alpha()
 player = Character(ship)
 player.name = "Player"
 player.rect.x = constants.SCREEN_X / 2 - 12
@@ -98,23 +98,23 @@ player.height = 24
 player.speed = 6
 player.lives = 3
 player.isPlayer = True
-player.children = pygame.sprite.Group()
+player.children = pg.sprite.Group()
 
 # Player specific function
 def displayLives():
     '''
         Displays how many lives player has left.
     '''
-    font = pygame.font.Font(None, 36)
+    font = pg.font.Font(None, 36)
     lives = font.render('Lives: ' + str(player.lives), False, constants.YELLOW)
     constants.DISPLAYSURF.blit(lives, [20, 20])
 
 # List of each character
-spriteList = pygame.sprite.Group()
+spriteList = pg.sprite.Group()
 spriteList.add(player)
 
 def makeBallUFO(pos_x, pos_y):
-    image = pygame.image.load("sprites\\ballUFO.png").convert_alpha()
+    image = pg.image.load("sprites\\ballUFO.png").convert_alpha()
     enemy = Character(image)
     enemy.name = "Ball UFO"
     enemy.rect.x = pos_x
@@ -123,11 +123,11 @@ def makeBallUFO(pos_x, pos_y):
     enemy.height = 34
     enemy.hb_offset_x = 8
     enemy.hb_offset_y = 8
-    enemy.children = pygame.sprite.Group()
+    enemy.children = pg.sprite.Group()
     return enemy
 
 def makeBug(pos_x, pos_y):
-    image = pygame.image.load("sprites\\bug.png").convert_alpha()
+    image = pg.image.load("sprites\\bug.png").convert_alpha()
     enemy = Character(image)
     enemy.name = "Bug alien"
     enemy.rect.x = pos_x
@@ -137,7 +137,7 @@ def makeBug(pos_x, pos_y):
     enemy.hb_offset_x = 10
     enemy.hb_offset_y = 10
     enemy.lives = 25
-    enemy.children = pygame.sprite.Group()
+    enemy.children = pg.sprite.Group()
     return enemy
 
 def playerShoot():

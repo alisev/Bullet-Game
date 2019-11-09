@@ -2,7 +2,7 @@
     Game assets, that aren't characters
 '''
 
-import pygame
+import pygame as pg
 import constants
 import entity
 
@@ -52,7 +52,7 @@ class Bullet(entity.Entity):
 
 # Functions that are used to create each type of bullet
 def makeMeteor(pos_x, pos_y):
-    image = pygame.image.load("sprites\\meteor.png").convert_alpha()
+    image = pg.image.load("sprites\\meteor.png").convert_alpha()
     bullet = Bullet(image)
     bullet.name = "Meteor"
     bullet.width = 16
@@ -64,7 +64,7 @@ def makeMeteor(pos_x, pos_y):
     return bullet
 
 def makeBigBall(pos_x, pos_y, a):
-    image = pygame.image.load("sprites\\ball1.png").convert_alpha()
+    image = pg.image.load("sprites\\ball1.png").convert_alpha()
     bullet = Bullet(image)
     bullet.name = "Small generic bullet"
     bullet.width = 22
@@ -79,7 +79,7 @@ def makeBigBall(pos_x, pos_y, a):
     return bullet
 
 def makeMediumBall(pos_x, pos_y, a):
-    image = pygame.image.load("sprites\\ball2.png").convert_alpha()
+    image = pg.image.load("sprites\\ball2.png").convert_alpha()
     bullet = Bullet(image)
     bullet.name = "Medium generic bullet"
     bullet.width = 16
@@ -95,7 +95,7 @@ def makeMediumBall(pos_x, pos_y, a):
 
 def makeSmallBall(pos_x, pos_y, a, variant):
     sprites = ["sprites\\ball3.png", "sprites\\ball3_bug.png"]
-    image = pygame.image.load(sprites[variant]).convert_alpha()
+    image = pg.image.load(sprites[variant]).convert_alpha()
     bullet = Bullet(image)
     bullet.name = "Small generic bullet"
     bullet.width = 10
@@ -110,7 +110,7 @@ def makeSmallBall(pos_x, pos_y, a, variant):
     return bullet
 
 def makeBullet(pos_x, pos_y):
-    image = pygame.image.load("sprites\\ship_bullet.png").convert_alpha()
+    image = pg.image.load("sprites\\ship_bullet.png").convert_alpha()
     bullet = Bullet(image)
     bullet.name = "Player's bullet"
     bullet.width = 3

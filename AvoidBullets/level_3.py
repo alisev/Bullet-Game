@@ -1,5 +1,3 @@
-import pygame
-import math
 import constants
 import bullet
 import chara

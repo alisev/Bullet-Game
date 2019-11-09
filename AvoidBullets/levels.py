@@ -1,4 +1,4 @@
-import pygame
+import pygame as pg
 import constants
 import level_1
 import level_2
@@ -67,7 +67,7 @@ def showHighscore(scoreList):
     '''
         Shows a list of 10 best highscores in highscore 
     '''
-    font = pygame.font.Font(None, 48)
+    font = pg.font.Font(None, 48)
 
     text_y_pos = 100
 
@@ -82,7 +82,7 @@ def displayHighscoreCounter():
     '''
         Displays player's current score.
     '''
-    font = pygame.font.Font(None, 36)
+    font = pg.font.Font(None, 36)
     x_pos = 650
     y_pos = 20
     score = font.render(str(highscore), False, constants.YELLOW)

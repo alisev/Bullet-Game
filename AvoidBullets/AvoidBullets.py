@@ -2,20 +2,20 @@
 # Requires Python and PyGame to run
 # Avoid bullets and try to get the highest score
 
-import pygame
+import pygame as pg
 import constants
 import chara
 import levels
 
-# --Essentals for game running--
-pygame.init()
+# --Essentals for running the game--
+pg.init()
 constants.DISPLAYSURF
-pygame.display.set_caption(constants.TITLE)
-clock = pygame.time.Clock()
+pg.display.set_caption(constants.TITLE)
+clock = pg.time.Clock()
 done = False
 
 # --Loads a couple of sprites--
-TITLE_LOGO = pygame.image.load("sprites\\title.png").convert_alpha()
+TITLE_LOGO = pg.image.load("sprites\\title.png").convert_alpha()
 
 # Splash, Gamewin and Gameover screen
 # TODO: make the screens
@@ -24,16 +24,16 @@ display_splash = True
 gameEnd = False
 
 # Fonts
-font = pygame.font.SysFont('Consolas', 28)
+font = pg.font.SysFont('Consolas', 28)
 
 # -- Splash screen --
 while not done and display_splash:
     # Event handling
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
             done = True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_RETURN:
                 display_splash = False
     
     # Game logic
@@ -61,32 +61,32 @@ while not done and display_splash:
     text = font.render('Press Enter key to start the game', True, constants.YELLOW)
     constants.DISPLAYSURF.blit(text, [ITEM_X_POS, FIRST_ITEM_Y_POS + LINE_SPACING * 3 + 20])
 
-    pygame.display.update()
+    pg.display.update()
     clock.tick(constants.FPS)
 
 # -- Main game loop --
 while not done and gameEnd == False:
     # Event handling
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
             done = True
 
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_LEFT:
                 chara.player.moveX(-1)
-            elif event.key == pygame.K_RIGHT:
+            elif event.key == pg.K_RIGHT:
                 chara.player.moveX(1)
-            elif event.key == pygame.K_UP:
+            elif event.key == pg.K_UP:
                 chara.player.moveY(-1)
-            elif event.key == pygame.K_DOWN:
+            elif event.key == pg.K_DOWN:
                 chara.player.moveY(1)
-            elif event.key == pygame.K_z:
+            elif event.key == pg.K_z:
                 chara.playerShoot()
 
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+        elif event.type == pg.KEYUP:
+            if event.key == pg.K_LEFT or event.key == pg.K_RIGHT:
                 chara.player.moveX(0)
-            elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+            elif event.key == pg.K_UP or event.key == pg.K_DOWN:
                 chara.player.moveY(0)
     
     # Game logic
@@ -105,6 +105,6 @@ while not done and gameEnd == False:
     chara.displayLives()
 
     clock.tick(constants.FPS)
-    pygame.display.update()
+    pg.display.update()
 
-pygame.quit()
+pg.quit()

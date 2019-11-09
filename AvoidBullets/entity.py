@@ -1,11 +1,11 @@
 import constants
-import pygame
+import pygame as pg
 
 '''
     Entity class. Used as basis for both Bullet and Character class.
 '''
 
-class Entity(pygame.sprite.Sprite):
+class Entity(pg.sprite.Sprite):
     '''
         Entity data. Used to create both Bullet and Character class.
         Has the following properties:
@@ -32,7 +32,7 @@ class Entity(pygame.sprite.Sprite):
         '''
             Draws character's hitbox border. For testing purposes only.
         '''
-        pygame.draw.rect(constants.DISPLAYSURF, (255,0,0), self.hitbox, 2)
+        pg.draw.rect(constants.DISPLAYSURF, (255,0,0), self.hitbox, 2)
 
     def move(self, move_x, move_y):
         '''

@@ -110,4 +110,5 @@ LEVEL IMPROVEMENTS:
 	- For completing the level
 	- For destroying enemies and in some cases - bullets
 - Finally implement Gamewin and Gameover screens with an option to replay the game
-- Center bullets in relation to the ship
+- Check over the current function versions, which functions can be replaced by pygame built in features
+	- Such as collission detection

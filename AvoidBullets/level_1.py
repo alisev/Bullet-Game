@@ -1,4 +1,3 @@
-import pygame
 import constants
 import bullet
 from chara import player
