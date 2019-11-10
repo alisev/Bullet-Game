@@ -109,14 +109,3 @@ def makeSmallBall(pos_x, pos_y, a, variant):
     bullet.radius = 0
     return bullet
 
-def makeBullet(pos_x, pos_y):
-    image = pg.image.load("sprites\\ship_bullet.png").convert_alpha()
-    bullet = Bullet(image)
-    bullet.name = "Player's bullet"
-    bullet.width = 3
-    bullet.height = 10
-    bullet.hb_offset_x = 0
-    bullet.hb_offset_y = 0
-    bullet.rect.x = pos_x
-    bullet.rect.y = pos_y
-    return bullet

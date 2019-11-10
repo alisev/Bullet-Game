@@ -45,6 +45,9 @@
     <Compile Include="level_3.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="player.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="states.py">
       <SubType>Code</SubType>
     </Compile>
