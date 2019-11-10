@@ -80,6 +80,22 @@ class LevelBlueprint():
         self.bulletLists.clear()
         self.enemyLists.clear()
 
+    def update(self, lvl):
+        '''
+            Updates game logic in current level.
+            lvl     Current level
+        '''
+        self.prepare()
+        self.updateLevel()
+        return self.isGroupEmpty(self.allSprites, lvl)
+
+    def updateLevel(self):
+        '''
+            Empty function for updating level to avoid errors in prepare() function.
+            This function is properly defined and used in each level's class.
+        '''
+        pass
+
     def prepare(self, a=1):
         '''
             Prepares level for the gameplay.
@@ -99,6 +115,15 @@ class LevelBlueprint():
         '''
         pass
 
+    def isGroupEmpty(self, group, lvl):
+        '''
+            Checks if given sprite group is empty.
+            group   Sprite group to be checked
+            lvl     Current level
+        '''
+        if len(group) == 0:
+            return lvl + 1
+        return lvl
 
 class Level_1(LevelBlueprint):
     def __init__(self):
@@ -123,11 +148,10 @@ class Level_1(LevelBlueprint):
             self.bulletLists[a].add(meteor)
             self.isPrepared = True
 
-    def update(self, lvl):
+    def updateLevel(self):
         '''
             Prepares enemies and bullets at the start of the level and handles game logic.
         '''
-        self.prepare()
         for i in range(self.bullet_rows):
             for obj in self.bulletLists[i]:
                 if i == 0:
@@ -139,7 +163,14 @@ class Level_1(LevelBlueprint):
                 # obj.collide(player) # TODO check collission between bulletLists and player by using pygames native functions
                 obj.checkBounds(False, False, True, False)
 
-        # return levelUtil.isGroupEmpty(levelUtil.allSprites, lvl) # TODO check if bulletLists is empty
-        return lvl
+class Level_2(LevelBlueprint):
+    def __init__(self):
+        super().__init__(2, 5)
 
-levelList = [Level_1()]
+    def prepareLevel(self):
+        pass
+
+    def updateLevel(self):
+        pass
+
+levelList = [Level_1(), Level_2()]
