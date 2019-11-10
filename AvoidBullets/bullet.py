@@ -51,61 +51,15 @@ class Bullet(entity.Entity):
         self.hitbox = (0,0,0,0)
 
 # Functions that are used to create each type of bullet
-def makeMeteor(pos_x, pos_y):
-    image = pg.image.load("sprites\\meteor.png").convert_alpha()
-    bullet = Bullet(image)
-    bullet.name = "Meteor"
-    bullet.width = 16
-    bullet.height = 16
-    bullet.hb_offset_x = 4
-    bullet.hb_offset_y = 4
-    bullet.rect.x = pos_x
-    bullet.rect.y = pos_y
-    return bullet
-
-def makeBigBall(pos_x, pos_y, a):
-    image = pg.image.load("sprites\\ball1.png").convert_alpha()
-    bullet = Bullet(image)
-    bullet.name = "Small generic bullet"
-    bullet.width = 22
-    bullet.height = 22
-    bullet.hb_offset_x = 4
-    bullet.hb_offset_y = 4
-    bullet.rect.x = pos_x
-    bullet.rect.y = pos_y
-
-    bullet.angle = a
-    bullet.radius = 30
-    return bullet
-
-def makeMediumBall(pos_x, pos_y, a):
-    image = pg.image.load("sprites\\ball2.png").convert_alpha()
-    bullet = Bullet(image)
-    bullet.name = "Medium generic bullet"
-    bullet.width = 16
-    bullet.height = 16
-    bullet.hb_offset_x = 2
-    bullet.hb_offset_y = 2
-    bullet.rect.x = pos_x
-    bullet.rect.y = pos_y
-
-    bullet.angle = a
-    bullet.radius = 50
-    return bullet
-
-def makeSmallBall(pos_x, pos_y, a, variant):
-    sprites = ["sprites\\ball3.png", "sprites\\ball3_bug.png"]
-    image = pg.image.load(sprites[variant]).convert_alpha()
-    bullet = Bullet(image)
-    bullet.name = "Small generic bullet"
-    bullet.width = 10
-    bullet.height = 10
-    bullet.hb_offset_x = 2
-    bullet.hb_offset_y = 2
-    bullet.rect.x = pos_x
-    bullet.rect.y = pos_y
-
-    bullet.angle = a
-    bullet.radius = 0
-    return bullet
-
+class Meteor(Bullet):
+    def __init__(self, pos_x, pos_y):
+        img = pg.image.load("sprites\\meteor.png").convert_alpha()
+        super().__init__(img)
+        self.name = "Meteor"
+        self.speed = 10
+        self.width = 16
+        self.height = 16
+        self.hb_offset_x = 4
+        self.hb_offset_y = 4
+        self.rect.x = pos_x
+        self.rect.y = pos_y

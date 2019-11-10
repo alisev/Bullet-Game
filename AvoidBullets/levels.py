@@ -1,4 +1,6 @@
 import pygame as pg
+import bullet
+import constants
 
 '''
     Contains functions that handles all level logic and rendering.
@@ -41,6 +43,7 @@ class LevelBlueprint():
         allSprites      All sprites in current level
         bulletLists     Array of bullet sprite groups
         enemyLists      Array of enemy sprite groups
+        isPrepared      Indicates if level has been prepared for gameplay
     '''
     def __init__(self, a, b):
         self.bullet_rows = a
@@ -55,7 +58,8 @@ class LevelBlueprint():
 
     def createSpriteList(self, n):
         '''
-            Creates sprite group arrays. Used for bulletLists and enemyLists
+            Creates sprite group arrays. Used for bulletLists and enemyLists.
+            Function is called by populateBulletLists and populateEnemyLists
         '''
         array = []
         for i in range(n):
@@ -63,10 +67,10 @@ class LevelBlueprint():
         return array
 
     def populateBulletLists(self):
-        self.bulletLists = createSpriteList(bullet_rows)
+        self.bulletLists = self.createSpriteList(self.bullet_rows)
 
-    def populateEnemyList(self, a):
-        self.enemyList = createSpriteList(a)
+    def populateEnemyLists(self, a):
+        self.enemyList = self.createSpriteList(a)
 
     def clearSpriteLists(self):
         '''
@@ -76,14 +80,66 @@ class LevelBlueprint():
         self.bulletLists.clear()
         self.enemyLists.clear()
 
+    def prepare(self, a=1):
+        '''
+            Prepares level for the gameplay.
+            a   Number of enemy sprite groups.
+        '''
+        if not self.isPrepared:
+            self.populateBulletLists()
+            self.populateEnemyLists(a)
+            for i in range(self.bullet_rows):
+                self.prepareLevel(i)
+            self.isPrepared = True
+
+    def prepareLevel(self, a):
+        '''
+            Empty function for level preparation to avoid errors in prepare() function.
+            This function is properly defined and used in each level's class.
+        '''
+        pass
+
+
 class Level_1(LevelBlueprint):
     def __init__(self):
         super().__init__(3, 5)
-        
-    def prepare(self):
-        pass
+    
+    def prepareLevel(self, a):
+        x = 0
+        y = 0
+        for i in range(self.bullets_perRow):
+            l = constants.SCREEN_X/(self.bullets_perRow * 2)
+            if a == 0:
+                x = l * (i - 4)
+                y = -l * i
+            elif a == 1:
+                x = constants.SCREEN_X + l * (i + self.bullets_perRow + 1)
+                y = l * (i - 2 * self.bullets_perRow + 1)
+            else:
+                x = l * (1 + i * 2)
+                y = -800
+            meteor = bullet.Meteor(x, y)
+            self.allSprites.add(meteor)
+            self.bulletLists[a].add(meteor)
+            self.isPrepared = True
 
     def update(self, lvl):
+        '''
+            Prepares enemies and bullets at the start of the level and handles game logic.
+        '''
+        self.prepare()
+        for i in range(self.bullet_rows):
+            for obj in self.bulletLists[i]:
+                if i == 0:
+                    obj.move(obj.speed, obj.speed)
+                elif i == 1:
+                    obj.move(-obj.speed, obj.speed)
+                else:
+                    obj.move(0, obj.speed)
+                # obj.collide(player) # TODO check collission between bulletLists and player by using pygames native functions
+                obj.checkBounds(False, False, True, False)
+
+        # return levelUtil.isGroupEmpty(levelUtil.allSprites, lvl) # TODO check if bulletLists is empty
         return lvl
 
 levelList = [Level_1()]

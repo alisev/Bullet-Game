@@ -7,12 +7,13 @@ class Player(chara.Character):
     '''
         Player class. Defines all entity and initial character properties.
     '''
-    def __init__(self, img):
+    def __init__(self):
+        img = pg.image.load("sprites\\ship.png").convert_alpha()
         super().__init__(img)
         self.name = "Player"
         self.width = 32
         self.height = 24
-        self.speed = 5
+        self.speed = 4
         self.rect.x = constants.SCREEN_X / 2 - 12
         self.rect.y = constants.SCREEN_Y / 6 * 5
         self.hitbox = (self.rect.x + self.hb_offset_x, self.rect.y + self.hb_offset_y, self.width, self.height)
@@ -83,6 +84,7 @@ class PlayerBullet(bullet.Bullet):
     def __init__(self, img, pos_x, pos_y):
         super().__init__(img)
         self.name = "Player's bullet"
+        self.speed = 5
         self.width = 3
         self.height = 10
         self.rect.x = pos_x
@@ -90,6 +92,6 @@ class PlayerBullet(bullet.Bullet):
         self.hitbox = (self.rect.x + self.hb_offset_x, self.rect.y + self.hb_offset_y, self.width, self.height)
 
     def update(self):
-        self.move(0, -5)
+        self.move(0, -self.speed)
         # TODO check if it has collided with an enemy
         # TODO kill when bullet has left bounds

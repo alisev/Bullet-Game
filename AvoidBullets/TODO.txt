@@ -1,8 +1,3 @@
-THINGS OF UPMOST IMPORTANCE RIGHT NOW:
-- Create a new player sprite design (thinner ship)
-	- Adjust hitbox accordingly
-
-
 TO DO list: IMPORTANT THINGS
 - Lives
 	- Function that calls Gameover screen, when player dies
@@ -14,34 +9,6 @@ TO DO list: IMPORTANT THINGS
 - Other screens
 	- Gamewin when player survives the final boss
 	- Gameover when they run out of lives
-- Character and Bullet class
-	- Character
-		- recalcPos
-			- calls move(move_x, move_y) from Entity class - DONE
-				- move_x, move_y - how much entity has moved
-			- calls checkBound(x_min, x_max, y_min, y_max)
-				- for some reason changing checkbound values causes player sprite to disappear
-				- ensure that the function is written correctly
-				- add input arguments for the bounds, because the enemies could move only around certain area
-				- x_min, x_max, y_min, y_max - bound's corner positions
-				- x_pos, y_pos, width, height - alternate arguments
-					- if isPlayer: can't leave bounds
-					- else: return a bool variable to use
-			- calls updateHitbox(x_pos, y_pos, width, height)
-				- x_pos, y_pos - hitbox's position. Relative to Character's position
-				- width, height - hitbox's width and height
-			- add bound(tuple) and hitboxSize(tuple) properties
-	- Bullet
-		- recalcPos
-			- calls move(move_x, move_y)
-			- checkBound(x_min, x_max, y_min, y_max)
-				- checks if bullet is still inside screen
-				- x_min = 0, x_max = constants.SCREEN_X, y_min = 0, y_max = constants.SCREEN_Y
-				- if not: remove and return
-			- updateHitbox(x_pos, y_pos, width, height)
-
-
-
 
 
 IF I HAVE ENOUGH TIME FOR THIS:
@@ -58,8 +25,6 @@ IF I HAVE ENOUGH TIME FOR THIS:
 		- Level selection:	Selects and plays a particular level
 		- Instructions:		Shows controls on separate screen
 		- Quit:				Closes window
-- Player
-	- Player can shoot enemies
 - Enemies
 	- Are destroyed when shot
 		- Shows explosion animation
@@ -80,11 +45,6 @@ IF I HAVE ENOUGH TIME FOR THIS:
 		- Lower speed
 - Font
 	- Use a better font
-- Other screens
-	- Move functions for all screens except game's to a new file
-- Classes
-	- Make some class methods private if possible.
-
 
 NOTES:
 - In level_1.py:
