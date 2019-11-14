@@ -1,8 +1,7 @@
 import pygame as pg
-import constants
-import levels
-import player
-import gamestates
+from constants import *
+from levels import Level, levelList
+from player import Player
 
 class Game(object):
     '''
@@ -21,7 +20,7 @@ class Game(object):
         self.done = False
         self.screen = screen
         self.clock = pg.time.Clock()
-        self.fps = constants.FPS
+        self.fps = FPS
         self.states = states
         self.state_name = start_state
         self.state = self.states[self.state_name]
@@ -139,7 +138,7 @@ class SplashScreen(GameState):
                 self.done = True
     
     def draw(self, surface):
-        surface.fill(constants.BGCOLOR)
+        surface.fill(BGCOLOR)
         surface.blit(self.title_logo,(121,100))
         # TODO splash screen graphic rendering goes here
 
@@ -154,13 +153,12 @@ class Gameplay(GameState):
     '''
     def __init__(self):
         super(Gameplay, self).__init__()
-        self.player = player.Player()
+        self.player = Player()
         self.allSprites = pg.sprite.Group()
         self.allSprites.add(self.player)
 
         self.score = 0
-
-        self.levels = levels.Level(levels.levelList)
+        self.levels = Level(levelList)
         
     def startup(self, persistent):
         pass
@@ -187,23 +185,29 @@ class Gameplay(GameState):
                 self.player.moveY(0)
         
     def update(self, dt):
+        '''
+            Updates entity position on screen and checks for collissions between them. 
+        '''
         self.player.update()
         self.levels.call() # TODO assign to self.done. When self.done is true, then call gameWin
-        # TODO calls the necessary level here
+        self.levels.isEntityHit(self.player)
+
+        # check for collission between self.player.children and self.levels.level.enemyLists[n] and then self.player and self.levels.level.bulletLists[n]
+        # check player's amount of lives. if 0, then call gameover
+        # increase score when enemies are shot
+
 
     def draw(self, surface):
-        surface.fill(constants.BGCOLOR)
+        surface.fill(BGCOLOR)
         self.allSprites.draw(surface)
         self.levels.draw()
-        # TODO calls drawing function of the particular level
 
-# TODO implement these and fix whatever problem im having with them
 class GameOver(GameState):
     '''
         Gameover screen.
     '''
     def __init__(self):
-        super(Gameplay, self).__init__()
+        super(GameOver, self).__init__()
         self.next_state = "SPLASH"
         # TODO variables
         
@@ -233,7 +237,7 @@ class GameWin(GameState):
         Gamewin screen.
     '''
     def __init__(self):
-        super(Gameplay, self).__init__()
+        super(GameWin, self).__init__()
         self.next_state = "SPLASH"
         # TODO variables
         

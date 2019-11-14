@@ -1,9 +1,9 @@
 import pygame as pg
-import chara
-import constants
-import bullet
+from chara import Character
+from constants import *
+from bullet import Bullet
 
-class Player(chara.Character):
+class Player(Character):
     '''
         Player class. Defines all entity and initial character properties.
     '''
@@ -14,8 +14,8 @@ class Player(chara.Character):
         self.width = 32
         self.height = 24
         self.speed = 4
-        self.rect.x = constants.SCREEN_X / 2 - 12
-        self.rect.y = constants.SCREEN_Y / 6 * 5
+        self.rect.x = SCREEN_X / 2 - 12
+        self.rect.y = SCREEN_Y / 6 * 5
         self.hitbox = (self.rect.x + self.hb_offset_x, self.rect.y + self.hb_offset_y, self.width, self.height)
         self.lives = 3
 
@@ -24,7 +24,7 @@ class Player(chara.Character):
             Updates player's position on screen
         '''
         self.move(self.move_x, self.move_y)
-        self.checkBounds()
+        self.keepWithinBounds()
         self.updateHitbox()
         for blt in self.children:
             blt.update()
@@ -43,13 +43,13 @@ class Player(chara.Character):
         '''
         self.move_y = y * self.speed
 
-    def checkBounds(self):
+    def keepWithinBounds(self):
         '''
             Checks if player isn't leaving the bounds.
             x_min, x_max, y_min, y_max - bound's corner positions.
         '''
-        max_x = constants.SCREEN_X - self.width
-        max_y = constants.SCREEN_Y - self.height
+        max_x = SCREEN_X - self.width
+        max_y = SCREEN_Y - self.height
         if self.rect.x > max_x:
             self.rect.x = max_x
         elif self.rect.x < 0:
@@ -58,17 +58,6 @@ class Player(chara.Character):
             self.rect.y = max_y
         elif self.rect.y < 0:
             self.rect.y = 0
-
-    def gotHit(self): # TODO test
-        '''
-            When player is hit by a bullet, they lose life points.
-            Function returns either True or False value 
-        '''
-        self.removeLifePoint()
-        if self.lives == 0:
-            # TODO test gameover call
-            return True
-        return False
 
     def shoot(self):
         '''
@@ -80,7 +69,7 @@ class Player(chara.Character):
         self.children.add(blt)
         return blt
 
-class PlayerBullet(bullet.Bullet):
+class PlayerBullet(Bullet):
     def __init__(self, img, pos_x, pos_y):
         super().__init__(img)
         self.name = "Player's bullet"
@@ -92,6 +81,9 @@ class PlayerBullet(bullet.Bullet):
         self.hitbox = (self.rect.x + self.hb_offset_x, self.rect.y + self.hb_offset_y, self.width, self.height)
 
     def update(self):
+        '''
+            Enables movement of the bullet and checks for collissions and 
+        '''
         self.move(0, -self.speed)
-        # TODO check if it has collided with an enemy
-        # TODO kill when bullet has left bounds
+        self.updateHitbox()
+        self.checkBounds(False, False, True, False)

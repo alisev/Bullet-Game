@@ -4,17 +4,18 @@
 
 import sys
 import pygame as pg
-import constants
-import gamestates
+from constants import *
+from gamestates import *
 
-# Main event loop
 if __name__ == "__main__":
     pg.init()
-    screen = pg.display.set_mode((constants.SCREEN_X, constants.SCREEN_Y))
-    pg.display.set_caption(constants.TITLE)
-    states = {"SPLASH": gamestates.SplashScreen(),
-              "GAMEPLAY": gamestates.Gameplay()}
-    game = gamestates.Game(screen, states, "SPLASH")
+    screen = pg.display.set_mode((SCREEN_X, SCREEN_Y))
+    pg.display.set_caption(TITLE)
+    states = {"SPLASH": SplashScreen(),
+              "GAMEPLAY": Gameplay(),
+              "GAMEOVER": GameOver(),
+              "GAMEWIN": GameWin()}
+    game = Game(screen, states, "SPLASH")
     game.run()
     pg.quit()
     sys.exit()

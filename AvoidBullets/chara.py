@@ -1,7 +1,5 @@
 import pygame as pg
-import constants
 import entity
-import bullet
 
 '''
     Defines character class and objects.
@@ -32,36 +30,30 @@ class Character(entity.Entity):
             child.kill()
         self.hitbox = (0,0,0,0)
 
-    def removeLifePoint():
+    def gotHit(self):
+        '''
+            When character gets hit by a bullet, they lose a lifepoint.
+        '''
         self.lives -= 1
-
-
-# Player specific function
-def displayLives():
-    '''
-        Displays how many lives player has left.
-    '''
-    font = pg.font.Font(None, 36)
-    lives = font.render('Lives: ' + str(player.lives), False, constants.YELLOW)
-    constants.DISPLAYSURF.blit(lives, [20, 20])
 
 def makeBallUFO(pos_x, pos_y):
     image = pg.image.load("sprites\\ballUFO.png").convert_alpha()
     enemy = Character(image)
     enemy.name = "Ball UFO"
+    enemy.speed = 5
     enemy.rect.x = pos_x
     enemy.rect.y = pos_y
     enemy.width = 34
     enemy.height = 34
     enemy.hb_offset_x = 8
     enemy.hb_offset_y = 8
-    enemy.children = pg.sprite.Group()
     return enemy
 
 def makeBug(pos_x, pos_y):
     image = pg.image.load("sprites\\bug.png").convert_alpha()
     enemy = Character(image)
     enemy.name = "Bug alien"
+    enemy.speed = 3
     enemy.rect.x = pos_x
     enemy.rect.y = pos_y
     enemy.width = 52
@@ -69,5 +61,4 @@ def makeBug(pos_x, pos_y):
     enemy.hb_offset_x = 10
     enemy.hb_offset_y = 10
     enemy.lives = 25
-    enemy.children = pg.sprite.Group()
     return enemy

@@ -1,5 +1,5 @@
-import constants
 import pygame as pg
+from constants import *
 
 '''
     Entity class. Used as basis for both Bullet and Character class.
@@ -30,12 +30,6 @@ class Entity(pg.sprite.Sprite):
         self.hb_offset_y = 0
         self.hitbox = (self.rect.x + self.hb_offset_x, self.rect.y + self.hb_offset_y, self.width, self.height)
 
-    def drawHitbox(self):
-        '''
-            Draws character's hitbox border. For testing purposes only.
-        '''
-        pg.draw.rect(constants.DISPLAYSURF, (255,0,0), self.hitbox, 2)
-
     def move(self, move_x, move_y):
         '''
             Recalculates entity's position on screen.
@@ -60,7 +54,7 @@ class Entity(pg.sprite.Sprite):
         edge_x = self.width + 2 * self.hb_offset_x
         edge_y = self.height + 2 * self.hb_offset_y
         if (checkTop == True and self.rect.y < -edge_x or
-            checkRight == True and self.rect.x > constants.SCREEN_X or
-            checkBot == True and self.rect.y > constants.SCREEN_Y or
+            checkRight == True and self.rect.x > SCREEN_X or
+            checkBot == True and self.rect.y > SCREEN_Y or
             checkLeft == True and self.rect.x < -edge_y):
             self.remove()
