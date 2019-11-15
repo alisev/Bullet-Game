@@ -189,7 +189,6 @@ class Level_1(LevelBlueprint):
                     obj.move(-obj.speed, obj.speed)
                 else:
                     obj.move(0, obj.speed)
-                # obj.collide(player) # TODO check collission between bulletLists and player by using pygames native functions
                 obj.checkBounds(False, False, True, False)
 
 class Level_2(LevelBlueprint):

@@ -189,7 +189,7 @@ class Gameplay(GameState):
             Updates entity position on screen and checks for collissions between them. 
         '''
         self.player.update()
-        gameFinished = self.levels.call() # TODO assign to self.done. When self.done is true, then call gameWin
+        gameFinished = self.levels.call()
         if gameFinished == True:
             self.next_state = "GAMEWIN"
             self.done = True
@@ -198,7 +198,7 @@ class Gameplay(GameState):
         if self.player.lives == 0:
             self.next_state = "GAMEOVER"
             self.done = True
-        # increase score when enemies are shot
+        # TODO increase score when enemies are shot
 
 
     def draw(self, surface):
