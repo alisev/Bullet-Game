@@ -33,16 +33,13 @@
     <Compile Include="levels.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="levelUtil.py">
+    <Compile Include="paths.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="level_1.py">
+    <Compile Include="player.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="level_2.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="level_3.py">
+    <Compile Include="gamestates.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

@@ -1,98 +1,233 @@
-import pygame
-import constants
-import level_1
-import level_2
-import level_3
+import pygame as pg
+import bullet
 import chara
-import levelUtil
+from constants import *
+import paths
 
 '''
-    Contains game logic that isn't specific to any level
+    Contains functions that handles all level logic and rendering.
 '''
 
-highscore = 0
-lvl = 0
-levelList = [level_1, level_2, level_3]
-
-def callLevel():
+class Level():
     '''
-        Calls the required level function. If player has beaten all levels, then a game win screen is shown.
+        Contains functions that handles all level logic and rendering.
+        level_num   Current level number
+        levels      A dict containing all levels
+        level       Current level
     '''
-    global lvl
+    def __init__(self, levelList):
+        self.level_num = 0
+        self.levels = levelList
+        self.level = self.levels[self.level_num]
+    
+    def call(self):
+        '''
+            Calls current level's game logic, updates level_num when level is completed and returns True or False value to indicate if the game has been beaten.
+        '''
+        levelCount = len(self.levels)
+        if self.level_num < levelCount:
+            self.level_num = self.level.update(self.level_num)
+            if self.level_num == levelCount:
+                return True
+            else:
+                self.level = self.levels[self.level_num]
+                return False
+        return True
 
-    if lvl < len(levelList):
-        lvl = levelList[lvl].update(lvl)
-    else:
-        # TODO switch to gamewin loop
+    def draw(self):
+        '''
+            Draws current level.
+        '''
+        screen = pg.display.get_surface()
+        if self.level_num < len(self.levels):
+            self.level.allSprites.draw(screen)
+
+    def entityCollission(self, entity):
+        '''
+            Checks for collissions between passed entity (player) and each group in BulletLists.
+            entity  Passed entity object
+        '''
+        for group in self.level.bulletLists:
+            list = pg.sprite.spritecollide(entity, group, True)
+            if len(list) > 0:
+                entity.gotHit()
+
+    def groupCollission(self, group):
+        '''
+            Checks for collissions between the passed group and each group in EnemyLists.
+            group   Passed group object
+        '''
+        for enemyGroup in self.level.enemyLists:
+            hitEnemies = pg.sprite.groupcollide(enemyGroup, group, False, True)
+            for enemy in hitEnemies:
+                enemy.gotHit()
+
+class LevelBlueprint():
+    '''
+        A blueprint class for level creation.
+        bullet_rows     Amount of rows with bullets
+        bullets_perRow  Amount of bullets per row
+        bullet_count    Total amount of bullets
+        allSprites      All sprites in current level
+        bulletLists     Array of bullet sprite groups
+        enemyLists      Array of enemy sprite groups
+        isPrepared      Indicates if level has been prepared for gameplay
+    '''
+    def __init__(self, a, b, c = 1, d = 0):
+        self.bullet_rows = a
+        self.bullets_perRow = b
+        self.bullet_count = self.bullet_rows * self.bullets_perRow
+
+        self.enemyGroupCount = c
+        self.enemy_perGroup = d
+
+        self.allSprites = pg.sprite.Group()
+        self.bulletLists = []
+        self.enemyLists = []
+
+        self.isPrepared = False
+
+    def createSpriteList(self, n):
+        '''
+            Creates sprite group arrays. Used for bulletLists and enemyLists.
+            Function is called by populateBulletLists and populateEnemyLists
+        '''
+        array = []
+        for i in range(n):
+            array.append(pg.sprite.Group())
+        return array
+
+    def populateBulletLists(self):
+        self.bulletLists = self.createSpriteList(self.bullet_rows)
+
+    def populateEnemyLists(self):
+        self.enemyLists = self.createSpriteList(self.enemyGroupCount)
+
+    def clearSpriteLists(self):
+        '''
+            Clears all sprite lists.
+        '''
+        self.allSprites.empty()
+        self.bulletLists.clear()
+        self.enemyLists.clear()
+
+    def update(self, lvl):
+        '''
+            Updates game logic in current level.
+            lvl     Current level
+        '''
+        self.prepare()
+        self.updateLevel()
+        return self.isGroupEmpty(self.allSprites, lvl)
+
+    def updateLevel(self):
+        '''
+            Empty function for updating level to avoid errors in prepare() function.
+            This function is properly defined and used in each level's class.
+        '''
         pass
 
-def draw():
-    if lvl < len(levelList):
-        levelUtil.draw(levelUtil.allSprites)
-    else:
-        # TODO call gamewin draw function
+    def prepare(self):
+        '''
+            Prepares level for the gameplay.
+        '''
+        if not self.isPrepared:
+            self.populateBulletLists()
+            self.populateEnemyLists()
+            self.prepareLevel()
+            self.isPrepared = True
+
+    def prepareLevel(self, row):
+        '''
+            Empty function for level preparation to avoid errors in prepare() function.
+            This function is properly defined and used in each level's class.
+        '''
         pass
 
-def highscoreCounter(pts):
-    '''
-        Increases the highscore counter.
-        pts - points awarded
-    '''
-    global highscore
-    highscore += pts
-    if highscore > 99999999:
-        highscore = 99999999 # Max score for now
+    def isGroupEmpty(self, group, lvl):
+        '''
+            Checks if given sprite group is empty.
+            group   Sprite group to be checked
+            lvl     Current level
+        '''
+        if len(group) == 0:
+            return lvl + 1
+        return lvl
 
-def saveHighscore():
-    '''
-        Saves score when game is finished.
-    '''
-    file = open("highscore.txt", "a")
-    file.write(highscore, '\n')
-    file.close()
+class Level_1(LevelBlueprint):
+    def __init__(self):
+        super().__init__(3, 5)
+    
+    def prepareLevel(self):
+        for row in range(self.bullet_rows):
+            x = 0
+            y = 0
+            for i in range(self.bullets_perRow):
+                l = SCREEN_X/(self.bullets_perRow * 2)
+                if row == 0:
+                    x = l * (i - 4)
+                    y = -l * i
+                elif row == 1:
+                    x = SCREEN_X + l * (i + self.bullets_perRow + 1)
+                    y = l * (i - 2 * self.bullets_perRow + 1)
+                else:
+                    x = l * (1 + i * 2)
+                    y = -800
+                meteor = bullet.makeMeteor(x, y)
+                self.allSprites.add(meteor)
+                self.bulletLists[row].add(meteor)
 
-def prepareHighscoreList():
-    '''
-        Makes a list of 10 best scores.
-    '''
-    file = open("highscore.txt", "r")
-    scoreList = []
-    for line in file:
-        scoreList.append(line)
-    file.close()
-    scoreList.sort(True)
-    return scoreList
+    def updateLevel(self):
+        '''
+            Prepares enemies and bullets at the start of the level and handles game logic.
+        '''
+        for i in range(self.bullet_rows):
+            for obj in self.bulletLists[i]:
+                if i == 0:
+                    obj.move(obj.speed, obj.speed)
+                elif i == 1:
+                    obj.move(-obj.speed, obj.speed)
+                else:
+                    obj.move(0, obj.speed)
+                # obj.collide(player) # TODO check collission between bulletLists and player by using pygames native functions
+                obj.checkBounds(False, False, True, False)
 
-def showHighscore(scoreList):
-    '''
-        Shows a list of 10 best highscores in highscore 
-    '''
-    font = pygame.font.Font(None, 48)
+class Level_2(LevelBlueprint):
+    def __init__(self):
+        super().__init__(10, 12, 1, 1)
 
-    text_y_pos = 100
+    def prepareLevel(self):
+        self.bug = chara.makeBug((SCREEN_X / 2) - 25, -50)
 
-    text = font.render('Highscores', False, constants.YELLOW)
-    constants.DISPLAYSURF.blit(text, [10, text_y_pos])
+        for i in range(self.bullet_rows):
+            angle = 0
+            offset = 360/self.bullets_perRow
+            for j in range(self.bullets_perRow):
+                angle += offset
+                ball = bullet.makeSmallBall(self.bug.rect.x + 36, self.bug.rect.y + 36, angle, 1)
+                self.bug.children.add(ball)
+                self.bulletLists[i].add(ball)
+                self.allSprites.add(ball)
+        self.allSprites.add(self.bug)
+        self.enemyLists[0].add(self.bug)
 
-    for i in range(10):
-        text = font.render(scoreList[i], False, constants.YELLOW)
-        constants.DISPLAYSURF.blit(text, [10, text_y_pos+(i+1)*50])
+    def updateLevel(self):
+        if self.bug.rect.y < 150:
+            self.bug.move(0, self.bug.speed)
+        else:
+            threshold = 10
+            th_reached = False
+            speed_r = 2
+            speed_a = 1
 
-def displayHighscoreCounter():
-    '''
-        Displays player's current score.
-    '''
-    font = pygame.font.Font(None, 36)
-    x_pos = 650
-    y_pos = 20
-    score = font.render(str(highscore), False, constants.YELLOW)
-    constants.DISPLAYSURF.blit(score, [x_pos, y_pos])
+            for ring in self.bulletLists:
+                for ball in ring:
+                    if ring == self.bulletLists[0] or ball.radius > 0 or (ball.radius == 0 and th_reached == True):
+                        paths.explode(ball, self.bug.rect.x + 36, self.bug.rect.y + 36, speed_r)
+                        paths.orbit(ball, self.bug.rect.x + 36, self.bug.rect.y + 36, speed_a)
+                        if ball.radius == threshold:
+                            th_reached = True
+                        else:
+                            th_reached = False
 
-def playerBulletsMove():
-    for blt in chara.player.children:
-        blt.move(0, -5)
-        if lvl < len(levelList):
-            for list in levelUtil.enemyLists:
-                for enemy in list:
-                    blt.collide(enemy)
-        levelUtil.checkBounds(blt, 10)
+levelList = [Level_1(), Level_2()]

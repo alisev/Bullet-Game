@@ -1,7 +1,5 @@
-import pygame
-import constants
+import pygame as pg
 import entity
-import bullet
 
 '''
     Defines character class and objects.
@@ -21,115 +19,44 @@ class Character(entity.Entity):
         self.move_x = 0
         self.move_y = 0
         self.lives = 1
-        self.isPlayer = False
-        self.children = None
-
-    def moveX(self, x=0):
-        '''
-            Enables character movement by changing move_x value.
-            x - direction in which character is moving. Usual values are -1, 1 and the default value 0 (not moving).
-        '''
-        self.move_x = x * self.speed
-
-    def moveY(self, y=0):
-        '''
-            Enables character movement by changing move_y value.
-            y - direction in which character is moving. Usual values are -1, 1 and the default value 0 (not moving).
-        '''
-        self.move_y = y * self.speed
-
-    def recalcPos(self):
-        '''
-            Recalculates character's position on screen. If it is the player's character, then an additional function checks if player isn't leaving the screen's bounds.
-        '''
-        self.move(self.move_x, self.move_y)
-        if self.isPlayer:
-            self.checkBounds()
-        self.updateHitbox()
-
-    def checkBounds(self):
-        '''
-            Checks if character isn't leaving the bounds. Used mainly for player character.
-            x_min, x_max, y_min, y_max - bound's corner positions.
-        '''
-        max_x = constants.SCREEN_X - self.width
-        max_y = constants.SCREEN_Y - self.height
-        if self.rect.x > max_x:
-            self.rect.x = max_x
-        elif self.rect.x < 0:
-            self.rect.x = 0
-        if self.rect.y > max_y:
-            self.rect.y = max_y
-        elif self.rect.y < 0:
-            self.rect.y = 0
+        self.children = pg.sprite.Group()
 
     def remove(self):
         '''
             Removes entity from screen.
         '''
         self.kill()
-        if self.children != None:
-            for child in self.children:
-                child.kill()
+        for child in self.children:
+            child.kill()
+            # TODO make an animation for the bullets, to make it look less jarring
         self.hitbox = (0,0,0,0)
 
     def gotHit(self):
         '''
-            When character is hit by a bullet, it loses life points.
+            When character gets hit by a bullet, they lose a lifepoint.
         '''
-        print(self.name, 'got hit')
-        self.lives = self.lives - 1
+        self.lives -= 1
         if self.lives == 0:
-            if self.isPlayer:
-                # TODO Calls GAME OVER
-                pass
-            else:
-                self.remove()
-            print(self.name, 'has died')
-
-# Player character data
-ship = pygame.image.load("sprites\\ship.png").convert_alpha()
-player = Character(ship)
-player.name = "Player"
-player.rect.x = constants.SCREEN_X / 2 - 12
-player.rect.y = constants.SCREEN_Y / 6 * 5
-player.width = 32
-player.height = 24
-player.speed = 6
-player.lives = 3
-player.isPlayer = True
-player.children = pygame.sprite.Group()
-
-# Player specific function
-def displayLives():
-    '''
-        Displays how many lives player has left.
-    '''
-    font = pygame.font.Font(None, 36)
-    lives = font.render('Lives: ' + str(player.lives), False, constants.YELLOW)
-    constants.DISPLAYSURF.blit(lives, [20, 20])
-
-# List of each character
-spriteList = pygame.sprite.Group()
-spriteList.add(player)
+            self.remove()
 
 def makeBallUFO(pos_x, pos_y):
-    image = pygame.image.load("sprites\\ballUFO.png").convert_alpha()
+    image = pg.image.load("sprites\\ballUFO.png").convert_alpha()
     enemy = Character(image)
     enemy.name = "Ball UFO"
+    enemy.speed = 5
     enemy.rect.x = pos_x
     enemy.rect.y = pos_y
     enemy.width = 34
     enemy.height = 34
     enemy.hb_offset_x = 8
     enemy.hb_offset_y = 8
-    enemy.children = pygame.sprite.Group()
     return enemy
 
 def makeBug(pos_x, pos_y):
-    image = pygame.image.load("sprites\\bug.png").convert_alpha()
+    image = pg.image.load("sprites\\bug.png").convert_alpha()
     enemy = Character(image)
     enemy.name = "Bug alien"
+    enemy.speed = 3
     enemy.rect.x = pos_x
     enemy.rect.y = pos_y
     enemy.width = 52
@@ -137,13 +64,4 @@ def makeBug(pos_x, pos_y):
     enemy.hb_offset_x = 10
     enemy.hb_offset_y = 10
     enemy.lives = 25
-    enemy.children = pygame.sprite.Group()
     return enemy
-
-def playerShoot():
-    '''
-        Creates a bullet whenever player shoots
-    '''
-    blt = bullet.makeBullet(player.rect.x + 16, player.rect.y)
-    player.children.add(blt)
-    spriteList.add(blt)
