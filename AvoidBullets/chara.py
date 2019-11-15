@@ -28,6 +28,7 @@ class Character(entity.Entity):
         self.kill()
         for child in self.children:
             child.kill()
+            # TODO make an animation for the bullets, to make it look less jarring
         self.hitbox = (0,0,0,0)
 
     def gotHit(self):
@@ -35,6 +36,8 @@ class Character(entity.Entity):
             When character gets hit by a bullet, they lose a lifepoint.
         '''
         self.lives -= 1
+        if self.lives == 0:
+            self.remove()
 
 def makeBallUFO(pos_x, pos_y):
     image = pg.image.load("sprites\\ballUFO.png").convert_alpha()

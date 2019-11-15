@@ -189,11 +189,15 @@ class Gameplay(GameState):
             Updates entity position on screen and checks for collissions between them. 
         '''
         self.player.update()
-        self.levels.call() # TODO assign to self.done. When self.done is true, then call gameWin
-        self.levels.isEntityHit(self.player)
-
-        # check for collission between self.player.children and self.levels.level.enemyLists[n] and then self.player and self.levels.level.bulletLists[n]
-        # check player's amount of lives. if 0, then call gameover
+        gameFinished = self.levels.call() # TODO assign to self.done. When self.done is true, then call gameWin
+        if gameFinished == True:
+            self.next_state = "GAMEWIN"
+            self.done = True
+        self.levels.entityCollission(self.player)
+        self.levels.groupCollission(self.player.children)
+        if self.player.lives == 0:
+            self.next_state = "GAMEOVER"
+            self.done = True
         # increase score when enemies are shot
 
 
@@ -220,8 +224,7 @@ class GameOver(GameState):
             self.quit = True
         elif event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:
-                # TODO Return to menu
-                pass
+                self.done = True
         
     def update(self, dt):
         # TODO game logic here
@@ -229,7 +232,7 @@ class GameOver(GameState):
         pass
 
     def draw(self, surface):
-        # Renders all highscores so far
+        surface.fill(WHITE)
         pass
 
 class GameWin(GameState):
@@ -250,8 +253,7 @@ class GameWin(GameState):
             self.quit = True
         elif event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:
-                # TODO Return to menu
-                pass
+                self.done = True
         
     def update(self, dt):
         # TODO game logic here
@@ -259,5 +261,5 @@ class GameWin(GameState):
         pass
 
     def draw(self, surface):
-        # Renders all highscores so far
-        pass
+        # TODO render highscore
+        surface.fill(BLACK)

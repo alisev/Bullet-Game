@@ -24,10 +24,14 @@ class Level():
         '''
             Calls current level's game logic, updates level_num when level is completed and returns True or False value to indicate if the game has been beaten.
         '''
-        if self.level_num < len(self.levels):
+        levelCount = len(self.levels)
+        if self.level_num < levelCount:
             self.level_num = self.level.update(self.level_num)
-            self.level = self.levels[self.level_num]
-            return False
+            if self.level_num == levelCount:
+                return True
+            else:
+                self.level = self.levels[self.level_num]
+                return False
         return True
 
     def draw(self):
@@ -38,16 +42,25 @@ class Level():
         if self.level_num < len(self.levels):
             self.level.allSprites.draw(screen)
 
-    def isEntityHit(self, entity):
-        returnedValue = False
+    def entityCollission(self, entity):
+        '''
+            Checks for collissions between passed entity (player) and each group in BulletLists.
+            entity  Passed entity object
+        '''
         for group in self.level.bulletLists:
-            list = pg.sprite.spritecollide(entity, group, False)
+            list = pg.sprite.spritecollide(entity, group, True)
             if len(list) > 0:
-                # TODO sprites from the list should be removed, keeping player's sprite intact
                 entity.gotHit()
-                print(entity.lives)
-                returnedValue = True
-        return returnedValue
+
+    def groupCollission(self, group):
+        '''
+            Checks for collissions between the passed group and each group in EnemyLists.
+            group   Passed group object
+        '''
+        for enemyGroup in self.level.enemyLists:
+            hitEnemies = pg.sprite.groupcollide(enemyGroup, group, False, True)
+            for enemy in hitEnemies:
+                enemy.gotHit()
 
 class LevelBlueprint():
     '''
