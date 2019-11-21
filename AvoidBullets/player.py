@@ -17,7 +17,7 @@ class Player(Character):
         self.rect.x = SCREEN_X / 2 - 12
         self.rect.y = SCREEN_Y / 6 * 5
         self.hitbox = (self.rect.x + self.hb_offset_x, self.rect.y + self.hb_offset_y, self.width, self.height)
-        self.lives = 3
+        self.lives = PLAYER_MAX_LIVES
 
     def update(self):
         '''

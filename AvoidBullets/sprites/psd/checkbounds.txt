@@ -1,9 +1,0 @@
-self.checkBounds(0, 0, constants.SCREEN_X, constants.SCREEN_Y)
-        if self.x_pos > x_max:
-            self.x_pos = x_max
-        elif self.x_pos < x_min:
-            self.x_pos = x_min
-        if self.y_pos > y_max:
-            self.y_pos = y_max
-        elif self.y_pos < y_min:
-            self.y_pos = y_min
