@@ -19,6 +19,12 @@ class Level():
         self.level_num = 0
         self.levels = levelList
         self.level = self.levels[self.level_num]
+
+    def resetGame(self):
+        self.level_num = 0
+        for level in self.levels:
+            level.reset()
+        self.level = self.levels[self.level_num]
     
     def call(self):
         '''
@@ -81,6 +87,7 @@ class LevelBlueprint():
         self.enemyGroupCount = c
         self.enemy_perGroup = d
 
+    def reset(self):
         self.allSprites = pg.sprite.Group()
         self.bulletLists = []
         self.enemyLists = []

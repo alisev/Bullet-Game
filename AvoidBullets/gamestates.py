@@ -153,15 +153,15 @@ class Gameplay(GameState):
     '''
     def __init__(self):
         super(Gameplay, self).__init__()
+        self.levels = Level(levelList)
+        
+    def startup(self, persistent):
         self.player = Player()
         self.allSprites = pg.sprite.Group()
         self.allSprites.add(self.player)
 
         self.score = 0
-        self.levels = Level(levelList)
-        
-    def startup(self, persistent):
-        pass
+        self.levels.resetGame()
         
     def get_event(self, event):
         if event.type == pg.QUIT:
@@ -205,6 +205,26 @@ class Gameplay(GameState):
         surface.fill(BGCOLOR)
         self.allSprites.draw(surface)
         self.levels.draw()
+        self.lifeCounter(surface)
+        # draw highscore counter
+
+    def lifeCounter(self, surface):
+        '''
+            Displays how many lives player has left.
+        '''
+        lives_max = PLAYER_MAX_LIVES
+        lives = self.player.lives
+        sprites = ["sprites\\life.png", "sprites\\life_empty.png"]
+        x_pos = 25
+        y_pos = 25
+        for i in range(lives_max):
+            if i < lives:
+                img = sprites[0]
+            else:
+                img = sprites[1]
+            loadedImage = pg.image.load(img).convert_alpha()
+            surface.blit(loadedImage, (x_pos, y_pos))
+            x_pos += 37
 
 class GameOver(GameState):
     '''
