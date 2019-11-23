@@ -2,6 +2,7 @@ import pygame as pg
 from constants import *
 from levels import Level, levelList
 from player import Player
+import os
 
 class Game(object):
     '''
@@ -128,7 +129,7 @@ class SplashScreen(GameState):
         super(SplashScreen, self).__init__()
         self.persist["screen_color"] = "black"
         self.next_state = "GAMEPLAY"
-        self.title_logo = pg.image.load("sprites\\title.png").convert_alpha()
+        self.title_logo = pg.image.load(os.path.join("sprites","title.png")).convert_alpha()
         
     def get_event(self, event):
         if event.type == pg.QUIT:
@@ -214,7 +215,7 @@ class Gameplay(GameState):
         '''
         lives_max = PLAYER_MAX_LIVES
         lives = self.player.lives
-        sprites = ["sprites\\life.png", "sprites\\life_empty.png"]
+        sprites = [os.path.join("sprites", "life.png"), os.path.join("sprites", "life_empty.png")]
         x_pos = 25
         y_pos = 25
         for i in range(lives_max):

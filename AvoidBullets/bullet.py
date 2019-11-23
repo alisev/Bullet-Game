@@ -4,6 +4,7 @@
 
 import pygame as pg
 import entity
+import os
 
 class Bullet(entity.Entity):
     '''
@@ -26,7 +27,7 @@ def makeSmallBall(pos_x, pos_y, angle, variant):
         a           Angle
         variant     Version of sprite
     '''
-    sprites = ["sprites\\ball3.png", "sprites\\ball3_bug.png"]
+    sprites = [os.path.join("sprites", "ball3.png"), os.path.join("sprites", "ball3_bug.png")]
     image = pg.image.load(sprites[variant]).convert_alpha()
     bullet = Bullet(image)
     bullet.name = "Small generic bullet"
@@ -42,7 +43,7 @@ def makeSmallBall(pos_x, pos_y, angle, variant):
     return bullet
 
 def makeMeteor(pos_x, pos_y):
-    img = pg.image.load("sprites\\meteor.png").convert_alpha()
+    img = pg.image.load(os.path.join("sprites", "meteor.png")).convert_alpha()
     bullet = Bullet(img)
     bullet.name = "Meteor"
     bullet.speed = 10

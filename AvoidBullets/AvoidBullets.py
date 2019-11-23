@@ -1,4 +1,4 @@
-# Alise Linda Viļuma, av17098
+# Alise Linda Viluma, av17098
 # Requires Python and PyGame to run
 # Avoid bullets and try to get the highest score
 

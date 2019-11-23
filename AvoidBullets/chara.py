@@ -1,5 +1,6 @@
 import pygame as pg
 import entity
+import os
 
 '''
     Defines character class and objects.
@@ -40,7 +41,7 @@ class Character(entity.Entity):
             self.remove()
 
 def makeBallUFO(pos_x, pos_y):
-    image = pg.image.load("sprites\\ballUFO.png").convert_alpha()
+    image = pg.image.load(os.path.join("sprites", "ballUFO.png")).convert_alpha()
     enemy = Character(image)
     enemy.name = "Ball UFO"
     enemy.speed = 5
@@ -53,7 +54,7 @@ def makeBallUFO(pos_x, pos_y):
     return enemy
 
 def makeBug(pos_x, pos_y):
-    image = pg.image.load("sprites\\bug.png").convert_alpha()
+    image = pg.image.load(os.path.join("sprites", "bug.png")).convert_alpha()
     enemy = Character(image)
     enemy.name = "Bug alien"
     enemy.speed = 3
