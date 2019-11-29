@@ -2,14 +2,13 @@ import pygame as pg
 from chara import Character
 from constants import *
 from bullet import Bullet
-import os
 
 class Player(Character):
     '''
         Player class. Defines all entity and initial character properties.
     '''
     def __init__(self):
-        img = pg.image.load(os.path.join("sprites", "ship.png")).convert_alpha()
+        img = "ship.png"
         super().__init__(img)
         self.name = "Player"
         self.width = 32
@@ -65,13 +64,13 @@ class Player(Character):
             Creates a new bullet when player presses button.
             Returns the bullet object, so it can be added to sprite lists.
         '''
-        image = pg.image.load(os.path.join("sprites", "ship_bullet.png")).convert_alpha()
-        blt = PlayerBullet(image, self.rect.x + 16, self.rect.y)
+        blt = PlayerBullet(self.rect.x + 16, self.rect.y)
         self.children.add(blt)
         return blt
 
 class PlayerBullet(Bullet):
-    def __init__(self, img, pos_x, pos_y):
+    def __init__(self, pos_x, pos_y):
+        img = "ship_bullet.png"
         super().__init__(img)
         self.name = "Player's bullet"
         self.speed = 5

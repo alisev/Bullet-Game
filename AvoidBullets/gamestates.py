@@ -1,5 +1,6 @@
 import pygame as pg
 from constants import *
+import highscore
 from levels import Level, levelList
 from player import Player
 import os
@@ -190,8 +191,8 @@ class Gameplay(GameState):
             Updates entity position on screen and checks for collissions between them. 
         '''
         self.player.update()
-        gameFinished = self.levels.call()
-        if gameFinished == True:
+        isGameFinished = self.levels.call()
+        if isGameFinished == True:
             self.next_state = "GAMEWIN"
             self.done = True
         self.levels.entityCollission(self.player)
@@ -199,15 +200,14 @@ class Gameplay(GameState):
         if self.player.lives == 0:
             self.next_state = "GAMEOVER"
             self.done = True
-        # TODO increase score when enemies are shot
-
+        # TODO increase score
 
     def draw(self, surface):
         surface.fill(BGCOLOR)
-        self.allSprites.draw(surface)
         self.levels.draw()
+        self.allSprites.draw(surface)
         self.lifeCounter(surface)
-        # draw highscore counter
+        highscore.displayScore(surface, self.score)
 
     def lifeCounter(self, surface):
         '''
@@ -219,10 +219,7 @@ class Gameplay(GameState):
         x_pos = 25
         y_pos = 25
         for i in range(lives_max):
-            if i < lives:
-                img = sprites[0]
-            else:
-                img = sprites[1]
+            img = sprites[0] if i < lives else sprites[1]
             loadedImage = pg.image.load(img).convert_alpha()
             surface.blit(loadedImage, (x_pos, y_pos))
             x_pos += 37
@@ -254,7 +251,9 @@ class GameOver(GameState):
 
     def draw(self, surface):
         surface.fill(WHITE)
-        pass
+        font = pg.font.Font(None, 16)
+        render_text = font.render("This is a demo screen, when player LOSES", True, YELLOW)
+        surface.blit(render_text, [400, 300])
 
 class GameWin(GameState):
     '''
@@ -284,3 +283,6 @@ class GameWin(GameState):
     def draw(self, surface):
         # TODO render highscore
         surface.fill(BLACK)
+        font = pg.font.Font(None, 16)
+        render_text = font.render("This is a demo screen, when player WINS", True, YELLOW)
+        surface.blit(render_text, [400, 300])
