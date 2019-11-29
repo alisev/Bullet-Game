@@ -22,12 +22,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AvoidBullets.py" />
+    <Compile Include="boosts.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="chara.py" />
     <Compile Include="constants.py" />
     <Compile Include="bullet.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="entity.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="highscore.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="levels.py">
@@ -40,6 +46,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="gamestates.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="position.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

@@ -1,7 +1,7 @@
 import math
 
 '''
-    Functions that move entities in certain paths. 
+    Functions that moves entity's in a path. 
 '''
 
 def explode(entity, x_origin, y_origin, speed):
@@ -41,3 +41,26 @@ def degrees2rad(angle):
         Helper function that converts given angle from degrees to radians.
     '''
     return math.radians(angle)
+
+def followEntity(entity_target, entity_move, enable_rotation):
+    '''
+        An individual entity flies moves towards another.
+        entity_target       A target entity
+        entity_move         An entity that moves towards entity_target
+        enable_rotation     Enable rotation of entity_move sprite
+    '''
+    pass
+
+def aimAtEntity(entity_target, entity_aim):
+    '''
+        Aims a group of sprites at an entity
+        entity_target       A target entity
+        entity_aim          An entity that is aimed at entity_target
+        enable_rotation     Enable rotation of entity_aim sprite
+    '''
+
+def rotateEntity(entity):
+    '''
+        Rotates an individual entity's sprite.
+    '''
+    pass

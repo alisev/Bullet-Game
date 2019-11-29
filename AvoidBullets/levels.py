@@ -3,6 +3,7 @@ import bullet
 import chara
 from constants import *
 import paths
+import position
 
 '''
     Contains functions that handles all level logic and rendering.
@@ -79,13 +80,13 @@ class LevelBlueprint():
         enemyLists      Array of enemy sprite groups
         isPrepared      Indicates if level has been prepared for gameplay
     '''
-    def __init__(self, a, b, c = 1, d = 0):
-        self.bullet_rows = a
-        self.bullets_perRow = b
+    def __init__(self, bulletRows, bulletCount, enemyGroups = 1, enemyCount = 0):
+        self.bullet_rows = bulletRows
+        self.bullets_perRow = bulletCount
         self.bullet_count = self.bullet_rows * self.bullets_perRow
 
-        self.enemyGroupCount = c
-        self.enemy_perGroup = d
+        self.enemyGroupCount = enemyGroups
+        self.enemy_perGroup = enemyCount
 
     def reset(self):
         self.allSprites = pg.sprite.Group()
@@ -166,20 +167,25 @@ class Level_1(LevelBlueprint):
         super().__init__(3, 5)
     
     def prepareLevel(self):
+        '''
+            Defines each bullet group's parameters (width, height, position) and calculates each bullet's coordinate.
+            Then creates bullets and places them in the appropriate groups.
+        '''
+        sprite_width = 24
+        widths = [320, 320, 640]
+        heights = [-320, 320, 0]
+        offsets = [(-320, 0),
+                    (1280, -720),
+                    (80 - sprite_width/2, -800)]
         for row in range(self.bullet_rows):
-            x = 0
-            y = 0
+            positions = position.distributeEven(self.bullets_perRow,
+                                                widths[row],
+                                                heights[row],
+                                                offsets[row][0],
+                                                offsets[row][1])
             for i in range(self.bullets_perRow):
-                l = SCREEN_X/(self.bullets_perRow * 2)
-                if row == 0:
-                    x = l * (i - 4)
-                    y = -l * i
-                elif row == 1:
-                    x = SCREEN_X + l * (i + self.bullets_perRow + 1)
-                    y = l * (i - 2 * self.bullets_perRow + 1)
-                else:
-                    x = l * (1 + i * 2)
-                    y = -800
+                x = positions[i][0]
+                y = positions[i][1]
                 meteor = bullet.makeMeteor(x, y)
                 self.allSprites.add(meteor)
                 self.bulletLists[row].add(meteor)
@@ -203,16 +209,16 @@ class Level_2(LevelBlueprint):
         super().__init__(10, 12, 1, 1)
 
     def prepareLevel(self):
-        self.bug = chara.makeBug((SCREEN_X / 2) - 25, -50)
-
-        for i in range(self.bullet_rows):
-            angle = 0
-            offset = 360/self.bullets_perRow
-            for j in range(self.bullets_perRow):
-                angle += offset
-                ball = bullet.makeSmallBall(self.bug.rect.x + 36, self.bug.rect.y + 36, angle, 1)
+        '''
+            Creates a bug enemy and it's bullets.
+        '''
+        self.bug = chara.makeBug((SCREEN_X / 2) - 36, -50)
+        for row in range(self.bullet_rows):
+            angles = position.distributeAngle(self.bullets_perRow, self.bug.rect.x + 36, self.bug.rect.y + 36)
+            for i in range(self.bullets_perRow):
+                ball = bullet.makeSmallBall(self.bug.rect.x + 36, self.bug.rect.y + 36, angles[i], 1)
                 self.bug.children.add(ball)
-                self.bulletLists[i].add(ball)
+                self.bulletLists[row].add(ball)
                 self.allSprites.add(ball)
         self.allSprites.add(self.bug)
         self.enemyLists[0].add(self.bug)
@@ -235,5 +241,18 @@ class Level_2(LevelBlueprint):
                             th_reached = True
                         else:
                             th_reached = False
+
+class Level_3(LevelBlueprint):
+    def __init__(self):
+        super().__init__(1, 1) # TODO change to appropirate numbers
+    
+    def prepareLevel(self):
+        pass
+
+    def updateLevel(self):
+        '''
+            Prepares enemies and bullets at the start of the level and handles game logic.
+        '''
+        pass
 
 levelList = [Level_1(), Level_2()]
