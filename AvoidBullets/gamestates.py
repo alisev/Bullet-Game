@@ -198,6 +198,7 @@ class Gameplay(GameState):
         self.levels.entityCollission(self.player)
         self.levels.groupCollission(self.player.children)
         if self.player.lives == 0:
+            self.persist["score"] = self.score
             self.next_state = "GAMEOVER"
             self.done = True
         # TODO increase score
@@ -231,11 +232,12 @@ class GameOver(GameState):
     def __init__(self):
         super(GameOver, self).__init__()
         self.next_state = "SPLASH"
-        # TODO variables
         
     def startup(self, persistent):
-        # TODO highscore from game gets passed here
-        pass
+        # self.player_score = self.persist["score"]
+        self.player_score = 50000000
+        self.highscore_list = highscore.loadFromFile()
+        self.highscore_list = highscore.comparePlayerScore(self.highscore_list, self.player_score)
         
     def get_event(self, event):
         if event.type == pg.QUIT:
@@ -250,10 +252,8 @@ class GameOver(GameState):
         pass
 
     def draw(self, surface):
-        surface.fill(WHITE)
-        font = pg.font.Font(None, 16)
-        render_text = font.render("This is a demo screen, when player LOSES", True, YELLOW)
-        surface.blit(render_text, [400, 300])
+        surface.fill(BGCOLOR)
+        highscore.displayBest(surface, self.highscore_list)
 
 class GameWin(GameState):
     '''

@@ -214,7 +214,7 @@ class Level_2(LevelBlueprint):
         '''
         self.bug = chara.makeBug((SCREEN_X / 2) - 36, -50)
         for row in range(self.bullet_rows):
-            angles = position.distributeAngle(self.bullets_perRow, self.bug.rect.x + 36, self.bug.rect.y + 36)
+            angles = position.distributeAngle(self.bullets_perRow)
             for i in range(self.bullets_perRow):
                 ball = bullet.makeSmallBall(self.bug.rect.x + 36, self.bug.rect.y + 36, angles[i], 1)
                 self.bug.children.add(ball)
