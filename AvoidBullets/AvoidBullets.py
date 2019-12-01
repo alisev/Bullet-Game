@@ -13,8 +13,7 @@ if __name__ == "__main__":
     pg.display.set_caption(TITLE)
     states = {"SPLASH": SplashScreen(),
               "GAMEPLAY": Gameplay(),
-              "GAMEOVER": GameOver(),
-              "GAMEWIN": GameWin()}
+              "GAMEOVER": GameOver()}
     game = Game(screen, states, "SPLASH")
     game.run()
     pg.quit()

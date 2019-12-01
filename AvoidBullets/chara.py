@@ -13,6 +13,7 @@ class Character(entity.Entity):
             lives           Number of lives a character has. Each character has 1 life by default.
             isPlayer        Defines if character is the player
             children        Bullet sprite group
+            value           Amount of points that the player is awarded with, when they shoot the enemy.
     '''
     def __init__(self, img):
         super().__init__(img)
@@ -20,6 +21,7 @@ class Character(entity.Entity):
         self.move_y = 0
         self.lives = 1
         self.children = pg.sprite.Group()
+        self.value = 0
 
     def remove(self):
         '''
@@ -50,6 +52,7 @@ def makeBallUFO(pos_x, pos_y):
     enemy.height = 34
     enemy.hb_offset_x = 8
     enemy.hb_offset_y = 8
+    enemy.value = 5
     return enemy
 
 def makeBug(pos_x, pos_y):
@@ -63,5 +66,21 @@ def makeBug(pos_x, pos_y):
     enemy.height = 52
     enemy.hb_offset_x = 10
     enemy.hb_offset_y = 10
+    enemy.lives = 10
+    enemy.value = 20
+    return enemy
+
+def makeBoss(pos_x, pos_y):
+    image = "boss1.png"
+    enemy = Character(image)
+    enemy.name = "Boss UFO"
+    enemy.speed = 3
+    enemy.rect.x = pos_x
+    enemy.rect.y = pos_y
+    enemy.width = 96
+    enemy.height = 55
+    enemy.hb_offset_x = 0
+    enemy.hb_offset_y = 0
     enemy.lives = 25
+    enemy.value = 100
     return enemy

@@ -3,6 +3,7 @@ from constants import *
 import highscore
 from levels import Level, levelList
 from player import Player
+import util
 import os
 
 class Game(object):
@@ -90,12 +91,11 @@ class GameState(object):
         self.next_state = None
         self.screen_rect = pg.display.get_surface().get_rect()
         self.persist = {}
-        self.font = pg.font.Font(None, 24)
         
     def startup(self, persistent):
         '''
-        Called when a state resumes being active. Allows information to be passed between states.
-        persistent  A dict passed from state to state
+            Called when a state resumes being active. Allows information to be passed between states.
+            persistent  A dict passed from state to state
         '''
         self.persist = persistent        
         
@@ -130,7 +130,7 @@ class SplashScreen(GameState):
         super(SplashScreen, self).__init__()
         self.persist["screen_color"] = "black"
         self.next_state = "GAMEPLAY"
-        self.title_logo = pg.image.load(os.path.join("sprites","title.png")).convert_alpha()
+        self.title_logo = util.loadSprite("title.png")
         
     def get_event(self, event):
         if event.type == pg.QUIT:
@@ -156,6 +156,7 @@ class Gameplay(GameState):
     def __init__(self):
         super(Gameplay, self).__init__()
         self.levels = Level(levelList)
+        self.next_state = "GAMEOVER"
         
     def startup(self, persistent):
         self.player = Player()
@@ -191,17 +192,14 @@ class Gameplay(GameState):
             Updates entity position on screen and checks for collissions between them. 
         '''
         self.player.update()
-        isGameFinished = self.levels.call()
-        if isGameFinished == True:
-            self.next_state = "GAMEWIN"
-            self.done = True
+        data = self.levels.call()
+        isGameFinished = data["done"]
         self.levels.entityCollission(self.player)
-        self.levels.groupCollission(self.player.children)
-        if self.player.lives == 0:
+        self.score += self.levels.groupCollission(self.player.children) + data["points"]
+        if self.player.lives == 0 or isGameFinished:
             self.persist["score"] = self.score
-            self.next_state = "GAMEOVER"
+            self.persist["lives"] = self.player.lives
             self.done = True
-        # TODO increase score
 
     def draw(self, surface):
         surface.fill(BGCOLOR)
@@ -216,28 +214,33 @@ class Gameplay(GameState):
         '''
         lives_max = PLAYER_MAX_LIVES
         lives = self.player.lives
-        sprites = [os.path.join("sprites", "life.png"), os.path.join("sprites", "life_empty.png")]
+        sprites = ["life.png", "life_empty.png"]
         x_pos = 25
         y_pos = 25
         for i in range(lives_max):
             img = sprites[0] if i < lives else sprites[1]
-            loadedImage = pg.image.load(img).convert_alpha()
+            loadedImage = util.loadSprite(img)
             surface.blit(loadedImage, (x_pos, y_pos))
             x_pos += 37
 
 class GameOver(GameState):
     '''
-        Gameover screen.
+        Game state when player wins or loses the game.
     '''
     def __init__(self):
         super(GameOver, self).__init__()
         self.next_state = "SPLASH"
         
     def startup(self, persistent):
-        # self.player_score = self.persist["score"]
-        self.player_score = 50000000
-        self.highscore_list = highscore.loadFromFile()
-        self.highscore_list = highscore.comparePlayerScore(self.highscore_list, self.player_score)
+        self.persist = persistent 
+        self.player_score = self.persist["score"]
+        self.message = ""
+        if self.persist["lives"] > 0:
+            self.message = "Congratulations! You've won!"
+        else:
+            self.message = "Game Over"
+        self.highscores = highscore.Highscore(self.player_score, highscore.file)
+        self.highscores.compare()
         
     def get_event(self, event):
         if event.type == pg.QUIT:
@@ -247,42 +250,10 @@ class GameOver(GameState):
                 self.done = True
         
     def update(self, dt):
-        # TODO game logic here
-        # IMPORTANT events here get looped, so if I'm saving game results to a txt file, I must make sure that it happens only once
         pass
 
     def draw(self, surface):
         surface.fill(BGCOLOR)
-        highscore.displayBest(surface, self.highscore_list)
-
-class GameWin(GameState):
-    '''
-        Gamewin screen.
-    '''
-    def __init__(self):
-        super(GameWin, self).__init__()
-        self.next_state = "SPLASH"
-        # TODO variables
-        
-    def startup(self, persistent):
-        # TODO highscore from game gets passed here
-        pass
-        
-    def get_event(self, event):
-        if event.type == pg.QUIT:
-            self.quit = True
-        elif event.type == pg.KEYDOWN:
-            if event.key == pg.K_RETURN:
-                self.done = True
-        
-    def update(self, dt):
-        # TODO game logic here
-        # IMPORTANT events here get looped, so if I'm saving game results to a txt file, I must make sure that it happens only once
-        pass
-
-    def draw(self, surface):
-        # TODO render highscore
-        surface.fill(BLACK)
-        font = pg.font.Font(None, 16)
-        render_text = font.render("This is a demo screen, when player WINS", True, YELLOW)
-        surface.blit(render_text, [400, 300])
+        util.renderText(surface, self.message, [100, 100], 36)
+        util.renderText(surface, "You earned " + str(self.player_score) + " points.", [100, 144], 36)
+        self.highscores.displayBest(surface)

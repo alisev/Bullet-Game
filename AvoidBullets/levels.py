@@ -32,14 +32,17 @@ class Level():
             Calls current level's game logic, updates level_num when level is completed and returns True or False value to indicate if the game has been beaten.
         '''
         levelCount = len(self.levels)
+        data = {"done": False,
+                "points": 0}
         if self.level_num < levelCount:
-            self.level_num = self.level.update(self.level_num)
+            gameUpdateData = self.level.update(self.level_num)
+            self.level_num = gameUpdateData["level_num"]
+            data["points"] = gameUpdateData["points"]
             if self.level_num == levelCount:
-                return True
+                data["done"] = True
             else:
                 self.level = self.levels[self.level_num]
-                return False
-        return True
+        return data
 
     def draw(self):
         '''
@@ -64,10 +67,14 @@ class Level():
             Checks for collissions between the passed group and each group in EnemyLists.
             group   Passed group object
         '''
+        earned_pts = 0
         for enemyGroup in self.level.enemyLists:
             hitEnemies = pg.sprite.groupcollide(enemyGroup, group, False, True)
             for enemy in hitEnemies:
                 enemy.gotHit()
+                earned_pts += enemy.value
+        return earned_pts
+
 
 class LevelBlueprint():
     '''
@@ -75,18 +82,22 @@ class LevelBlueprint():
         bullet_rows     Amount of rows with bullets
         bullets_perRow  Amount of bullets per row
         bullet_count    Total amount of bullets
+        enemyGroupCount Number of enemy groups
+        enemy_perGroup  Number of enemies per group
+        value           Amount of points player is rewarded with, when they finish the level.
         allSprites      All sprites in current level
         bulletLists     Array of bullet sprite groups
         enemyLists      Array of enemy sprite groups
-        isPrepared      Indicates if level has been prepared for gameplay
+        isPrepared      Indicates if the level has been prepared for gameplay
     '''
-    def __init__(self, bulletRows, bulletCount, enemyGroups = 1, enemyCount = 0):
+    def __init__(self, bulletRows, bulletCount, enemyGroups = 1, enemyCount = 0, value = 0):
         self.bullet_rows = bulletRows
         self.bullets_perRow = bulletCount
         self.bullet_count = self.bullet_rows * self.bullets_perRow
 
         self.enemyGroupCount = enemyGroups
         self.enemy_perGroup = enemyCount
+        self.value = value
 
     def reset(self):
         self.allSprites = pg.sprite.Group()
@@ -158,13 +169,16 @@ class LevelBlueprint():
             group   Sprite group to be checked
             lvl     Current level
         '''
+        data = {"level_num": lvl,
+                "points": 0}
         if len(group) == 0:
-            return lvl + 1
-        return lvl
+            data["level_num"] += 1
+            data["points"] = self.value
+        return data
 
 class Level_1(LevelBlueprint):
     def __init__(self):
-        super().__init__(3, 5)
+        super().__init__(3, 5, value = 10)
     
     def prepareLevel(self):
         '''
@@ -206,7 +220,7 @@ class Level_1(LevelBlueprint):
 
 class Level_2(LevelBlueprint):
     def __init__(self):
-        super().__init__(10, 12, 1, 1)
+        super().__init__(10, 12, 1, 1, value = 50)
 
     def prepareLevel(self):
         '''
@@ -244,7 +258,7 @@ class Level_2(LevelBlueprint):
 
 class Level_3(LevelBlueprint):
     def __init__(self):
-        super().__init__(1, 1) # TODO change to appropirate numbers
+        super().__init__(1, 1, value = 500) # TODO change to appropirate numbers
     
     def prepareLevel(self):
         pass
