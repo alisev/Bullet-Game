@@ -1,6 +1,7 @@
 import pygame as pg
 from constants import *
 import os
+import util
 
 '''
     Entity class. Used as basis for both Bullet and Character class.
@@ -17,7 +18,6 @@ class Entity(pg.sprite.Sprite):
             image           Entity's sprite.
             rect            Necessary for drawing sprite
             hitbox          Entity's hitbox
-
     '''
     def __init__(self, img):
         super().__init__()
@@ -25,7 +25,7 @@ class Entity(pg.sprite.Sprite):
         self.speed = 0
         self.width = 0
         self.height = 0
-        self.image = self.loadSprite(img)
+        self.image = util.loadSprite(img)
         self.rect = self.image.get_rect()
         self.hb_offset_x = 0
         self.hb_offset_y = 0
@@ -59,10 +59,3 @@ class Entity(pg.sprite.Sprite):
             checkBot == True and self.rect.y > SCREEN_Y or
             checkLeft == True and self.rect.x < -edge_y):
             self.remove()
-
-    def loadSprite(self, file_name):
-        '''
-            Loads sprite from folder 'sprites'.
-        '''
-        full_path = os.path.join("sprites", file_name)
-        return pg.image.load(full_path)
