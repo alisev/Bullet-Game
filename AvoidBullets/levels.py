@@ -4,6 +4,7 @@ import chara
 from constants import *
 import paths
 import position
+import player
 
 '''
     Contains functions that handles all level logic and rendering.
@@ -258,15 +259,26 @@ class Level_2(LevelBlueprint):
 
 class Level_3(LevelBlueprint):
     def __init__(self):
-        super().__init__(1, 1, value = 500) # TODO change to appropirate numbers
+        super().__init__(2, 6, 1, 1, value = 500) # TODO change to appropirate numbers
     
-    def prepareLevel(self):
-        pass
+    def prepareLevel(self): #TODO fimnsih
+        self.boss = chara.makeBoss(352, -55)
+        triangle_pos = [[100, 100], [200, 200]]
+        for i in range(self.bullet_rows):
+            pos = position.triangleFormation(self.bullets_perRow, triangle_pos[i], 50)
+            for j in range(self.bullets_perRow):
+                blt = bullet.makeHomingMissile(pos[j][0], pos[j][1])
+                self.bulletLists[i].add(blt)
+                self.allSprites.add(blt)
+        self.enemyLists[0].add(self.boss)
+        self.allSprites.add(self.boss)
 
     def updateLevel(self):
         '''
             Prepares enemies and bullets at the start of the level and handles game logic.
         '''
+        isBossDescended = paths.entityDescent(self.boss, 100, 10)
         pass
 
-levelList = [Level_1(), Level_2()]
+#levelList = [Level_1(), Level_2(), Level_3()]
+levelList = [Level_3()]

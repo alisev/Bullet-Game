@@ -1,4 +1,5 @@
 import pygame as pg
+import pygame.freetype
 import os
 from constants import *
 
@@ -10,10 +11,9 @@ def renderText(screen, text, position, size):
     '''
         Renders text on screen.
     '''
-    type_face = None
-    font = pg.font.Font(type_face, size)
-    render_text = font.render(text, True, YELLOW)
-    screen.blit(render_text, position)
+    fontdir = os.path.dirname(os.path.abspath (__file__))
+    font = pygame.freetype.Font(os.path.join (fontdir, "fonts", "retro gaming.ttf"), 22)
+    render_text = font.render_to(screen, position, text, YELLOW, None)
 
 def loadSprite(file_name):
     '''

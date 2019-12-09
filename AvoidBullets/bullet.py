@@ -4,6 +4,7 @@
 
 import pygame as pg
 import entity
+import util
 
 class Bullet(entity.Entity):
     '''
@@ -32,8 +33,8 @@ def makeSmallBall(pos_x, pos_y, angle, variant):
     bullet.speed = 5
     bullet.width = 10
     bullet.height = 10
-    bullet.hb_offset_x = 2
-    bullet.hb_offset_y = 2
+    bullet.hb_offset_x = 3
+    bullet.hb_offset_y = 3
     bullet.rect.x = pos_x
     bullet.rect.y = pos_y
     bullet.angle = angle
@@ -63,8 +64,8 @@ def makeHomingMissile(pos_x, pos_y):
     bullet.hb_offset_y = 0
     bullet.rect.x = pos_x
     bullet.rect.y = pos_y
-    bullet.sprite_still = bullet.loadSprite(sprites[0])
-    bullet.sprites_move = bullet.loadSprite(sprites[1])
+    bullet.sprite_still = util.loadSprite(sprites[0])
+    bullet.sprites_move = util.loadSprite(sprites[1])
     return bullet
 
 def makeLaser(pos_x, pos_y):

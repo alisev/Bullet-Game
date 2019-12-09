@@ -87,3 +87,5 @@ class PlayerBullet(Bullet):
         self.move(0, -self.speed)
         self.updateHitbox()
         self.checkBounds(False, False, True, False)
+
+player = Player()

@@ -58,9 +58,31 @@ def aimAtEntity(entity_target, entity_aim):
         entity_aim          An entity that is aimed at entity_target
         enable_rotation     Enable rotation of entity_aim sprite
     '''
+    # todo: gets vector 
+    target_pos = getEntityPos(entity_target)
 
 def rotateEntity(entity):
     '''
         Rotates an individual entity's sprite.
     '''
     pass
+
+def getEntityPos(entity):
+    '''
+        Gets entity's coordinates on screen.
+    '''
+    return entity.rect.x, entity.rect.y
+
+def entityDescent(entity, target, speed):
+    '''
+        Plays an animation of entity descending from top of the screen. Returns bool value, if entity has reached its destination.
+        entity  Entity object
+        target  Target coordinate
+        speed   Entity's movement speed
+    '''
+    # make it so it has actual movemnt
+    if entity.rect.y < target:
+        distance = target - entity.rect.y
+        t = distance/speed
+        entity.rect.y = -distance/100 * math.pow(t, 2) + distance/5 * t
+        

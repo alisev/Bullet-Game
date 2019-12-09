@@ -2,9 +2,8 @@ import pygame as pg
 from constants import *
 import highscore
 from levels import Level, levelList
-from player import Player
+import player
 import util
-import os
 
 class Game(object):
     '''
@@ -142,7 +141,7 @@ class SplashScreen(GameState):
     def draw(self, surface):
         surface.fill(BGCOLOR)
         surface.blit(self.title_logo,(121,100))
-        # TODO splash screen graphic rendering goes here
+        util.renderText(surface, 'Press Enter key to start the game', [150, 350], 22)
 
 class Gameplay(GameState):
     '''
@@ -159,7 +158,7 @@ class Gameplay(GameState):
         self.next_state = "GAMEOVER"
         
     def startup(self, persistent):
-        self.player = Player()
+        self.player = player.player
         self.allSprites = pg.sprite.Group()
         self.allSprites.add(self.player)
 
