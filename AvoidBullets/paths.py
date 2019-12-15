@@ -1,4 +1,5 @@
 import math
+import util
 
 '''
     Functions that moves entity's in a path. 
@@ -42,24 +43,29 @@ def degrees2rad(angle):
     '''
     return math.radians(angle)
 
-def followEntity(entity_target, entity_move, enable_rotation):
+def followEntity(ent_target, ent_move, enable_rotation):
     '''
         An individual entity flies moves towards another.
         entity_target       A target entity
         entity_move         An entity that moves towards entity_target
         enable_rotation     Enable rotation of entity_move sprite
     '''
+    ent_target_pos = getEntityPos(ent_target)
+
     pass
 
-def aimAtEntity(entity_target, entity_aim):
+def aimAtEntity(entity_target, entity_aim, entity_rotation = False):
     '''
         Aims a group of sprites at an entity
         entity_target       A target entity
         entity_aim          An entity that is aimed at entity_target
         enable_rotation     Enable rotation of entity_aim sprite
     '''
-    # todo: gets vector 
+    start_pos = [entity_aim.rect.x, entity_aim.rect.y]
     target_pos = getEntityPos(entity_target)
+    vector = calcVector(start_pos, target_pos)
+    #TODO if entity_rotation==True, calculate angle, how far the sprite needs to be rotated
+    return vector
 
 def rotateEntity(entity):
     '''
@@ -71,18 +77,17 @@ def getEntityPos(entity):
     '''
         Gets entity's coordinates on screen.
     '''
-    return entity.rect.x, entity.rect.y
+    return [entity.rect.x, entity.rect.y]
 
-def entityDescent(entity, target, speed):
+def calcVector(start, end):
     '''
-        Plays an animation of entity descending from top of the screen. Returns bool value, if entity has reached its destination.
-        entity  Entity object
-        target  Target coordinate
-        speed   Entity's movement speed
+        Returns a vector between 2 coordinates.
     '''
-    # make it so it has actual movemnt
-    if entity.rect.y < target:
-        distance = target - entity.rect.y
-        t = distance/speed
-        entity.rect.y = -distance/100 * math.pow(t, 2) + distance/5 * t
-        
+    return [end[0] - start[0], end[1] - start[1]]
+
+def calcAngle(a, b):
+    '''
+        Calculates angle between two coordinates.
+        a, b    Coordinates
+    '''
+    pass

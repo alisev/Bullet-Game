@@ -21,3 +21,11 @@ def loadSprite(file_name):
     '''
     full_path = os.path.join("sprites", file_name)
     return pg.image.load(full_path)
+
+def rotateSpriteCenter(image, rect, angle):
+    '''
+        Rotate's sprite using it's center as pivot point.
+    '''
+    rot_image = pygame.transform.rotate(image, angle)
+    rot_rect = rot_image.get_rect(center=rect.center)
+    return rot_image, rot_rect

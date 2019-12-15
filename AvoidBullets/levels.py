@@ -23,6 +23,7 @@ class Level():
         self.level = self.levels[self.level_num]
 
     def resetGame(self):
+        player.player.reset()
         self.level_num = 0
         for level in self.levels:
             level.reset()
@@ -75,7 +76,6 @@ class Level():
                 enemy.gotHit()
                 earned_pts += enemy.value
         return earned_pts
-
 
 class LevelBlueprint():
     '''
@@ -208,6 +208,7 @@ class Level_1(LevelBlueprint):
     def updateLevel(self):
         '''
             Prepares enemies and bullets at the start of the level and handles game logic.
+            Level 1 shoots meteors.
         '''
         for i in range(self.bullet_rows):
             for obj in self.bulletLists[i]:
@@ -237,37 +238,75 @@ class Level_2(LevelBlueprint):
                 self.allSprites.add(ball)
         self.allSprites.add(self.bug)
         self.enemyLists[0].add(self.bug)
+        self.bullets_gone = False
+        self.bug_leave_done = False
+        self.bug_enter_done = False
 
     def updateLevel(self):
-        if self.bug.rect.y < 150:
-            self.bug.move(0, self.bug.speed)
+        if self.bug_enter_done == False:
+            self.bug_enter_done = self.bugMovement(150)
         else:
-            threshold = 10
-            th_reached = False
-            speed_r = 2
-            speed_a = 1
+            self.bullets_gone = self.ringMovement()
+        if self.bullets_gone:
+            self.bug_leave_done = self.bugMovement(-55, False)
+        if self.bug_leave_done:
+            self.bug.remove()
 
-            for ring in self.bulletLists:
-                for ball in ring:
-                    if ring == self.bulletLists[0] or ball.radius > 0 or (ball.radius == 0 and th_reached == True):
-                        paths.explode(ball, self.bug.rect.x + 36, self.bug.rect.y + 36, speed_r)
-                        paths.orbit(ball, self.bug.rect.x + 36, self.bug.rect.y + 36, speed_a)
-                        if ball.radius == threshold:
-                            th_reached = True
-                        else:
-                            th_reached = False
+    def bugMovement(self, target, moveDown = True):
+        '''
+            Bug enters the screen.
+            Returns bool if the action is completed.
+            target      Target y coordinate
+            moveDown    Bug is descending
+        '''
+        speed = self.bug.speed if moveDown else -self.bug.speed
+        if (self.bug.rect.y < target and moveDown) or (self.bug.rect.y > target and moveDown == False):
+            self.bug.move(0, speed)
+            return False
+        return True
+
+    def ringMovement(self):
+        '''
+            Bullets orbit around the bug and move away
+        '''
+        th_reached = False
+        speed_r = 2
+        speed_a = 1
+        emptyBulletGroups = []
+        for ring in self.bulletLists:
+            for ball in ring:
+                if ring == self.bulletLists[0] or ball.radius > 0 or (ball.radius == 0 and th_reached == True):
+                    th_reached = self.bulletMovement(self.bug, ball, speed_r, speed_a)
+            if len(ring) == 0:
+                emptyBulletGroups.append(True)
+        if len(emptyBulletGroups) == self.bullet_rows:
+            return True
+        return False
+
+    def bulletMovement(self, enemy, bullet, speed_r, speed_a):
+        paths.explode(bullet, enemy.rect.x + 36, enemy.rect.y + 36, speed_r)
+        paths.orbit(bullet, enemy.rect.x + 36, enemy.rect.y + 36, speed_a)
+        bullet.checkBounds(True, True, True, True)
+        if bullet.radius == 10:
+            return True
+        return False
 
 class Level_3(LevelBlueprint):
     def __init__(self):
-        super().__init__(2, 6, 1, 1, value = 500) # TODO change to appropirate numbers
-    
-    def prepareLevel(self): #TODO fimnsih
-        self.boss = chara.makeBoss(352, -55)
-        triangle_pos = [[100, 100], [200, 200]]
+        super().__init__(2, 6, 1, 1, value = 500)
+
+    def prepareLevel(self):
+        x = 352
+        y = -55
+        self.boss = chara.makeBoss(x, y)
+        self.frame = 0
+        self.pos = []
+        self.boss_has_entered = False
+        triangle_pos = [[297, 100], [503, 200]]
         for i in range(self.bullet_rows):
-            pos = position.triangleFormation(self.bullets_perRow, triangle_pos[i], 50)
             for j in range(self.bullets_perRow):
-                blt = bullet.makeHomingMissile(pos[j][0], pos[j][1])
+                blt = bullet.makeHomingMissile(393, y + 5)
+                self.boss.children.add(blt)
                 self.bulletLists[i].add(blt)
                 self.allSprites.add(blt)
         self.enemyLists[0].add(self.boss)
@@ -277,8 +316,37 @@ class Level_3(LevelBlueprint):
         '''
             Prepares enemies and bullets at the start of the level and handles game logic.
         '''
-        isBossDescended = paths.entityDescent(self.boss, 100, 10)
-        pass
+        if self.boss_has_entered == False:
+            self.boss_has_entered = self.bossEntrance()
+        else:
+            # bullets come out of the ship and target the player one by one
 
-#levelList = [Level_1(), Level_2(), Level_3()]
+            pass
+
+    def bossEntrance(self):
+        boss_target_y = 100
+        if self.boss.rect.y < 100:
+            self.boss.move(0, 5)
+            for child in self.boss.children:
+                child.move(0, 5)
+            return False
+        return True
+
+    def bulletsFormation(self, bullet, pos):
+        speed = 3
+        print(pos)
+        vector = paths.calcVector([bullet.rect.x, bullet.rect.y], [pos[0], pos[1]])
+        if vector[0] > 0:
+            bullet.rect.x += speed
+        elif vector[0] < 0:
+            bullet.rect.x -= speed
+        if vector[1] > 0:
+            bullet.rect.y += speed
+        else:
+            bullet.rect.y -= speed
+        if (vector[0] >= 0 and bullet.rect.x >= vector[0]) or (vector[0] <= 0 and bullet.rect.x <= vector[0]):
+            if (vector[1] >= 0 and bullet.rect.y >= vector[1]) or (vector[1] <= 0 and bullet.rect.y <= vector[1]):
+                self.bullets_positioned = True
+
+# levelList = [Level_1(), Level_2(), Level_3()]
 levelList = [Level_3()]

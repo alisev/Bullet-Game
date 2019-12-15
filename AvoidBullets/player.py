@@ -14,10 +14,15 @@ class Player(Character):
         self.width = 32
         self.height = 24
         self.speed = 4
+        self.setAttrib()
+
+    def setAttrib(self):
+        self.lives = PLAYER_MAX_LIVES
         self.rect.x = SCREEN_X / 2 - 12
         self.rect.y = SCREEN_Y / 6 * 5
         self.hitbox = (self.rect.x + self.hb_offset_x, self.rect.y + self.hb_offset_y, self.width, self.height)
-        self.lives = PLAYER_MAX_LIVES
+        self.move_y = 0
+        self.move_x = 0
 
     def update(self):
         '''
@@ -67,6 +72,12 @@ class Player(Character):
         blt = PlayerBullet(self.rect.x + 16, self.rect.y)
         self.children.add(blt)
         return blt
+
+    def reset(self):
+        '''
+            Resets object's properties
+        '''
+        self.setAttrib()
 
 class PlayerBullet(Bullet):
     def __init__(self, pos_x, pos_y):
