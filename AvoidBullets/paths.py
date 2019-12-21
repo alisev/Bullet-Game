@@ -43,16 +43,19 @@ def degrees2rad(angle):
     '''
     return math.radians(angle)
 
-def followEntity(ent_target, ent_move, enable_rotation):
+def followEntity(entity_target, entity_move, enable_rotation):
     '''
         An individual entity flies moves towards another.
         entity_target       A target entity
         entity_move         An entity that moves towards entity_target
         enable_rotation     Enable rotation of entity_move sprite
     '''
-    ent_target_pos = getEntityPos(ent_target)
-
-    pass
+    start_pos = entity_move.getEntityPos()
+    target_pos = entity_target.getEntityPos()
+    vector = calcVector(start_pos, target_pos)
+    entity_move.angle = calcAngle(vector)
+    entity_move.radius = entity_move.speed
+    calcCircular(entity_move, entity_move.rect.x, entity_move.rect.y)
 
 def aimAtEntity(entity_target, entity_aim, entity_rotation = False):
     '''
@@ -61,23 +64,11 @@ def aimAtEntity(entity_target, entity_aim, entity_rotation = False):
         entity_aim          An entity that is aimed at entity_target
         enable_rotation     Enable rotation of entity_aim sprite
     '''
-    start_pos = [entity_aim.rect.x, entity_aim.rect.y]
-    target_pos = getEntityPos(entity_target)
+    start_pos = entity_aim.getEntityPos()
+    target_pos = entity_target.getEntityPos()
     vector = calcVector(start_pos, target_pos)
     #TODO if entity_rotation==True, calculate angle, how far the sprite needs to be rotated
     return vector
-
-def rotateEntity(entity):
-    '''
-        Rotates an individual entity's sprite.
-    '''
-    pass
-
-def getEntityPos(entity):
-    '''
-        Gets entity's coordinates on screen.
-    '''
-    return [entity.rect.x, entity.rect.y]
 
 def calcVector(start, end):
     '''
@@ -85,9 +76,21 @@ def calcVector(start, end):
     '''
     return [end[0] - start[0], end[1] - start[1]]
 
-def calcAngle(a, b):
+def calcAngle(vec):
     '''
-        Calculates angle between two coordinates.
-        a, b    Coordinates
+        Calculates angle from vector.
+        vec Vector
     '''
-    pass
+    angle = math.atan2(vec[1], vec[0])
+    return math.degrees(angle)
+
+def calcDistance(entity1, entity2):
+    '''
+        Calculates distance between two entities.
+    '''
+    pos1 = entity1.getEntityPos()
+    pos2 = entity2.getEntityPos()
+    vector = calcVector(pos1, pos2)
+    distance = math.sqrt(vector[0]**2 + vector[1]**2)
+    return distance
+    

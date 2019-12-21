@@ -33,6 +33,9 @@
     <Compile Include="entity.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="frame.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="highscore.py">
       <SubType>Code</SubType>
     </Compile>

@@ -13,6 +13,8 @@ class Bullet(entity.Entity):
     '''
     def __init__(self, img):
         super().__init__(img)
+        self.angle = 0
+        self.radius = 0
 
     def remove(self):
         '''
@@ -58,6 +60,7 @@ def makeHomingMissile(pos_x, pos_y):
     sprites = ["aim_still.png", "aim_move.png"]
     bullet = Bullet(sprites[0])
     bullet.name = "Homing missile"
+    bullet.speed = 4
     bullet.width = 10
     bullet.height = 22
     bullet.hb_offset_x = 2

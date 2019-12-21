@@ -59,3 +59,9 @@ class Entity(pg.sprite.Sprite):
             checkBot == True and self.rect.y > SCREEN_Y or
             checkLeft == True and self.rect.x < -edge_y):
             self.remove()
+
+    def getEntityPos(self):
+        '''
+            Gets entity's coordinates on screen.
+        '''
+        return [self.rect.x, self.rect.y]

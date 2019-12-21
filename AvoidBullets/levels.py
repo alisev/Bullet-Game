@@ -5,6 +5,7 @@ from constants import *
 import paths
 import position
 import player
+import frame
 
 '''
     Contains functions that handles all level logic and rendering.
@@ -293,35 +294,36 @@ class Level_2(LevelBlueprint):
 
 class Level_3(LevelBlueprint):
     def __init__(self):
-        super().__init__(2, 6, 1, 1, value = 500)
+        super().__init__(1, 6, 1, 1, value = 500)
 
     def prepareLevel(self):
         x = 352
         y = -55
         self.boss = chara.makeBoss(x, y)
-        self.frame = 0
-        self.pos = []
         self.boss_has_entered = False
-        triangle_pos = [[297, 100], [503, 200]]
         for i in range(self.bullet_rows):
             for j in range(self.bullets_perRow):
                 blt = bullet.makeHomingMissile(393, y + 5)
+                blt.flyOff = False
                 self.boss.children.add(blt)
                 self.bulletLists[i].add(blt)
                 self.allSprites.add(blt)
         self.enemyLists[0].add(self.boss)
         self.allSprites.add(self.boss)
+        self.frame = frame.Frame(30)
+        self.act = 0
 
     def updateLevel(self):
         '''
             Prepares enemies and bullets at the start of the level and handles game logic.
         '''
+        # acts = [self.bossEntrance, self.launchMissiles]
+        # acts[self.act]()
         if self.boss_has_entered == False:
             self.boss_has_entered = self.bossEntrance()
         else:
-            # bullets come out of the ship and target the player one by one
-
-            pass
+            self.launchMissiles()
+        self.frame.add()
 
     def bossEntrance(self):
         boss_target_y = 100
@@ -347,6 +349,16 @@ class Level_3(LevelBlueprint):
         if (vector[0] >= 0 and bullet.rect.x >= vector[0]) or (vector[0] <= 0 and bullet.rect.x <= vector[0]):
             if (vector[1] >= 0 and bullet.rect.y >= vector[1]) or (vector[1] <= 0 and bullet.rect.y <= vector[1]):
                 self.bullets_positioned = True
+
+    def launchMissiles(self):
+        for group in self.bulletLists:
+            for blt in group:
+                if paths.calcDistance(player.player, blt) < 100 or blt.flyOff == True:
+                    paths.explode(blt, blt.rect.x, blt.rect.y, int(blt.speed/3))
+                    blt.flyOff = True
+                elif blt.radius > 0 or self.frame.maxReached():
+                    paths.followEntity(player.player, blt, False)
+                blt.checkBounds(True, True, True, True)
 
 # levelList = [Level_1(), Level_2(), Level_3()]
 levelList = [Level_3()]
