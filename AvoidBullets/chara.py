@@ -15,8 +15,8 @@ class Character(entity.Entity):
             children        Bullet sprite group
             value           Amount of points that the player is awarded with, when they shoot the enemy.
     '''
-    def __init__(self, img):
-        super().__init__(img)
+    def __init__(self, img = None, width = 0, height = 0):
+        super().__init__(img, width, height)
         self.move_x = 0
         self.move_y = 0
         self.lives = 1

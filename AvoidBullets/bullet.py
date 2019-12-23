@@ -5,16 +5,15 @@
 import pygame as pg
 import entity
 import util
+import constants
 
 class Bullet(entity.Entity):
     '''
         Bullet object data. Used to shoot the player's character.
         All properties are listed in the Entity class.
     '''
-    def __init__(self, img):
-        super().__init__(img)
-        self.angle = 0
-        self.radius = 0
+    def __init__(self, img = None, width = 0, height = 0):
+        super().__init__(img, width, height)
 
     def remove(self):
         '''
@@ -76,10 +75,17 @@ def makeLaser(pos_x, pos_y):
     bullet = Bullet(img)
     bullet.name = "Laser"
     bullet.width = 16
-    bullet.height = 14
+    bullet.height = 16
     bullet.hb_offset_x = 0
     bullet.hb_offset_y = 0
     bullet.rect.x = pos_x
     bullet.rect.y = pos_y
     return bullet
 
+def makeLaserHint(start_pos, end_pos):
+    surface_size = util.calcVector(start_pos, end_pos)
+    bullet = Bullet(None, surface_size[0], surface_size[1])
+    bullet.image.set_colorkey(constants.COLOR["black"])
+    bullet.rect = bullet.image.get_rect()
+    # todo blit line on screen
+    return bullet

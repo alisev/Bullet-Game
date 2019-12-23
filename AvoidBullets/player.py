@@ -1,9 +1,9 @@
 import pygame as pg
-from chara import Character
-from constants import *
-from bullet import Bullet
+import chara
+import constants
+import bullet
 
-class Player(Character):
+class Player(chara.Character):
     '''
         Player class. Defines all entity and initial character properties.
     '''
@@ -17,9 +17,9 @@ class Player(Character):
         self.setAttrib()
 
     def setAttrib(self):
-        self.lives = PLAYER_MAX_LIVES
-        self.rect.x = SCREEN_X / 2 - 12
-        self.rect.y = SCREEN_Y / 6 * 5
+        self.lives = constants.PLAYER_MAX_LIVES
+        self.rect.x = 388
+        self.rect.y = 500
         self.hitbox = (self.rect.x + self.hb_offset_x, self.rect.y + self.hb_offset_y, self.width, self.height)
         self.move_y = 0
         self.move_x = 0
@@ -53,8 +53,8 @@ class Player(Character):
             Checks if player isn't leaving the bounds.
             x_min, x_max, y_min, y_max - bound's corner positions.
         '''
-        max_x = SCREEN_X - self.width
-        max_y = SCREEN_Y - self.height
+        max_x = constants.SCREEN_X - self.width
+        max_y = constants.SCREEN_Y - self.height
         if self.rect.x > max_x:
             self.rect.x = max_x
         elif self.rect.x < 0:
@@ -79,7 +79,7 @@ class Player(Character):
         '''
         self.setAttrib()
 
-class PlayerBullet(Bullet):
+class PlayerBullet(bullet.Bullet):
     def __init__(self, pos_x, pos_y):
         img = "ship_bullet.png"
         super().__init__(img)

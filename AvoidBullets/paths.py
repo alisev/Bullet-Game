@@ -52,7 +52,7 @@ def followEntity(entity_target, entity_move, enable_rotation):
     '''
     start_pos = entity_move.getEntityPos()
     target_pos = entity_target.getEntityPos()
-    vector = calcVector(start_pos, target_pos)
+    vector = util.calcVector(start_pos, target_pos)
     entity_move.angle = calcAngle(vector)
     entity_move.radius = entity_move.speed
     calcCircular(entity_move, entity_move.rect.x, entity_move.rect.y)
@@ -66,15 +66,9 @@ def aimAtEntity(entity_target, entity_aim, entity_rotation = False):
     '''
     start_pos = entity_aim.getEntityPos()
     target_pos = entity_target.getEntityPos()
-    vector = calcVector(start_pos, target_pos)
+    vector = util.calcVector(start_pos, target_pos)
     #TODO if entity_rotation==True, calculate angle, how far the sprite needs to be rotated
     return vector
-
-def calcVector(start, end):
-    '''
-        Returns a vector between 2 coordinates.
-    '''
-    return [end[0] - start[0], end[1] - start[1]]
 
 def calcAngle(vec):
     '''
@@ -90,7 +84,7 @@ def calcDistance(entity1, entity2):
     '''
     pos1 = entity1.getEntityPos()
     pos2 = entity2.getEntityPos()
-    vector = calcVector(pos1, pos2)
+    vector = util.calcVector(pos1, pos2)
     distance = math.sqrt(vector[0]**2 + vector[1]**2)
     return distance
     

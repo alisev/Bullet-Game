@@ -1,11 +1,11 @@
 import pygame as pg
 import bullet
 import chara
-from constants import *
 import paths
 import position
 import player
 import frame
+import util
 
 '''
     Contains functions that handles all level logic and rendering.
@@ -139,7 +139,7 @@ class LevelBlueprint():
         '''
         self.prepare()
         self.updateLevel()
-        return self.isGroupEmpty(self.allSprites, lvl)
+        return self.isAllSpritesEmpty(lvl)
 
     def updateLevel(self):
         '''
@@ -165,18 +165,23 @@ class LevelBlueprint():
         '''
         pass
 
-    def isGroupEmpty(self, group, lvl):
+    def isGroupEmpty(self, group):
         '''
             Checks if given sprite group is empty.
             group   Sprite group to be checked
-            lvl     Current level
         '''
+        if len(group) == 0:
+            return True
+        return False
+
+    def isAllSpritesEmpty(self, lvl):
         data = {"level_num": lvl,
                 "points": 0}
-        if len(group) == 0:
+        if self.isGroupEmpty(self.allSprites):
             data["level_num"] += 1
             data["points"] = self.value
         return data
+
 
 class Level_1(LevelBlueprint):
     def __init__(self):
@@ -229,7 +234,7 @@ class Level_2(LevelBlueprint):
         '''
             Creates a bug enemy and it's bullets.
         '''
-        self.bug = chara.makeBug((SCREEN_X / 2) - 36, -50)
+        self.bug = chara.makeBug(364, -50)
         for row in range(self.bullet_rows):
             angles = position.distributeAngle(self.bullets_perRow)
             for i in range(self.bullets_perRow):
@@ -310,55 +315,64 @@ class Level_3(LevelBlueprint):
                 self.allSprites.add(blt)
         self.enemyLists[0].add(self.boss)
         self.allSprites.add(self.boss)
-        self.frame = frame.Frame(30)
+        self.frame = frame.Frame(60)
         self.act = 0
+
+        # Todo this is a test.
+        self.laser = bullet.makeLaser(400, 300)
+        self.laser.scaleSprite((16, 80))
+        self.laser.rotateSprite(45)
+        self.laser2 = bullet.makeLaser(400, 300)
+        self.laser2.scaleSprite((16, 80))
+        self.allSprites.add(self.laser, self.laser2)
 
     def updateLevel(self):
         '''
             Prepares enemies and bullets at the start of the level and handles game logic.
         '''
-        # acts = [self.bossEntrance, self.launchMissiles]
-        # acts[self.act]()
-        if self.boss_has_entered == False:
-            self.boss_has_entered = self.bossEntrance()
-        else:
-            self.launchMissiles()
-        self.frame.add()
+        acts = [self.bossEntrance, self.launchMissiles, self.rotatingLaser]
+        if self.act < len(acts):
+            acts[self.act]()
 
     def bossEntrance(self):
+        '''
+            Boss sprite enters the screen.
+        '''
         boss_target_y = 100
-        if self.boss.rect.y < 100:
+        if self.boss.rect.y < boss_target_y:
             self.boss.move(0, 5)
             for child in self.boss.children:
                 child.move(0, 5)
-            return False
-        return True
-
-    def bulletsFormation(self, bullet, pos):
-        speed = 3
-        print(pos)
-        vector = paths.calcVector([bullet.rect.x, bullet.rect.y], [pos[0], pos[1]])
-        if vector[0] > 0:
-            bullet.rect.x += speed
-        elif vector[0] < 0:
-            bullet.rect.x -= speed
-        if vector[1] > 0:
-            bullet.rect.y += speed
-        else:
-            bullet.rect.y -= speed
-        if (vector[0] >= 0 and bullet.rect.x >= vector[0]) or (vector[0] <= 0 and bullet.rect.x <= vector[0]):
-            if (vector[1] >= 0 and bullet.rect.y >= vector[1]) or (vector[1] <= 0 and bullet.rect.y <= vector[1]):
-                self.bullets_positioned = True
+            return
+        self.act += 1
 
     def launchMissiles(self):
+        '''
+            Boss launches missiles that follow player's movements.
+        '''
+        emptyGroupCount = 0
         for group in self.bulletLists:
-            for blt in group:
-                if paths.calcDistance(player.player, blt) < 100 or blt.flyOff == True:
-                    paths.explode(blt, blt.rect.x, blt.rect.y, int(blt.speed/3))
-                    blt.flyOff = True
-                elif blt.radius > 0 or self.frame.maxReached():
-                    paths.followEntity(player.player, blt, False)
-                blt.checkBounds(True, True, True, True)
+            if self.isGroupEmpty(group):
+                emptyGroupCount += 1
+            else:
+                for blt in group:
+                    if paths.calcDistance(player.player, blt) < 100 or blt.flyOff == True:
+                        paths.explode(blt, blt.rect.x, blt.rect.y, int(blt.speed/3))
+                        blt.flyOff = True
+                    elif blt.radius > 0 or self.frame.maxReached():
+                        paths.followEntity(player.player, blt, False)
+                    blt.checkBounds(True, True, True, True)
+        self.frame.add()
+        if emptyGroupCount == self.bullet_rows:
+            self.act += 1
+            self.frame.count = 0
+
+    def rotatingLaser(self):
+        '''
+            Rotating lasers that flicker.
+        '''
+        # todo test enlongated laser and rotation here
+        pass
 
 # levelList = [Level_1(), Level_2(), Level_3()]
 levelList = [Level_3()]
