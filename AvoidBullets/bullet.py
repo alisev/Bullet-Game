@@ -76,8 +76,8 @@ def makeLaser(pos_x, pos_y):
     bullet.name = "Laser"
     bullet.width = 16
     bullet.height = 16
-    bullet.hb_offset_x = 0
-    bullet.hb_offset_y = 0
+    bullet.hb_offset_x = 1
+    bullet.hb_offset_y = 1
     bullet.rect.x = pos_x
     bullet.rect.y = pos_y
     return bullet

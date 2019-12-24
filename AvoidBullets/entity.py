@@ -77,7 +77,6 @@ class Entity(pg.sprite.Sprite):
         if file is not None:
             return util.loadSprite(file)
         else:
-            print("LoadSprite in entity.py: No file specified, created a surface.")
             return pg.Surface([width, height])
 
     def scaleSprite(self, new_size):
@@ -86,8 +85,8 @@ class Entity(pg.sprite.Sprite):
         '''
         new_image = pg.transform.scale(self.image, new_size)
         scale = {
-            "x": new_size[0]/(self.width + self.hb_offset_x),
-            "y": new_size[1]/(self.height + self.hb_offset_y)
+            "x": new_size[0]/(self.width + self.hb_offset_x * 2),
+            "y": new_size[1]/(self.height + self.hb_offset_y * 2)
             }
         self.updateImage(new_image)
         self.width *= scale["x"]

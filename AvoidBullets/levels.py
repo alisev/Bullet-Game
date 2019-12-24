@@ -236,14 +236,8 @@ class Level_2(LevelBlueprint):
         '''
         self.bug = chara.makeBug(364, -50)
         for row in range(self.bullet_rows):
-            angles = position.distributeAngle(self.bullets_perRow)
-            for i in range(self.bullets_perRow):
-                ball = bullet.makeSmallBall(self.bug.rect.x + 36, self.bug.rect.y + 36, angles[i], 1)
-                self.bug.children.add(ball)
-                self.bulletLists[row].add(ball)
-                self.allSprites.add(ball)
-        self.allSprites.add(self.bug)
-        self.enemyLists[0].add(self.bug)
+            prepareCircle(self.bullets_perRow, (self.bug.rect.x + 36, self.bug.rect.y + 36), 1, [self.bug.children, self.bulletLists[row], self.allSprites])
+        addToGroups(self.bug, [self.allSprites, self.enemyLists[0]])
         self.bullets_gone = False
         self.bug_leave_done = False
         self.bug_enter_done = False
@@ -299,38 +293,43 @@ class Level_2(LevelBlueprint):
 
 class Level_3(LevelBlueprint):
     def __init__(self):
-        super().__init__(1, 6, 1, 1, value = 500)
+        bullet_count = [10, 2, 120]
+        super().__init__(len(bullet_count), bullet_count, 1, 1, value = 500)
+
+    def prepareMissiles(self, group):
+        y = self.boss.rect.y
+        for i in range(self.bullets_perRow[group]):
+            blt = bullet.makeHomingMissile(393, y + 5)
+            blt.flyOff = False
+            addToGroups(blt, [self.boss.children, self.bulletLists[group], self.allSprites])
+
+    def prepareLasers(self, group):
+        for i in range(self.bullets_perRow[group]):
+            laser = bullet.makeLaser(-18, -18)
+            laser.org_image = laser.image
+            laser.scaleSprite((9, 9))
+            addToGroups(laser, [self.bulletLists[group], self.allSprites])
 
     def prepareLevel(self):
         x = 352
         y = -55
         self.boss = chara.makeBoss(x, y)
         self.boss_has_entered = False
+        prepOrder = [self.prepareMissiles, self.prepareLasers, prepareCircle]
         for i in range(self.bullet_rows):
-            for j in range(self.bullets_perRow):
-                blt = bullet.makeHomingMissile(393, y + 5)
-                blt.flyOff = False
-                self.boss.children.add(blt)
-                self.bulletLists[i].add(blt)
-                self.allSprites.add(blt)
-        self.enemyLists[0].add(self.boss)
-        self.allSprites.add(self.boss)
-        self.frame = frame.Frame(60)
+            if prepOrder[i] is not prepareCircle: #TODO ensure this is correct
+                prepOrder[i](i)
+            else:
+                prepareCircle(self.bullets_perRow[i], (self.boss.rect.x + 48, self.boss.rect.y + 27), 0, [self.bulletLists[i], self.boss.children, self.allSprites])
+        addToGroups(self.boss, [self.enemyLists[0], self.allSprites])
+        self.frame = frame.Frame(40)
         self.act = 0
-
-        # Todo this is a test.
-        self.laser = bullet.makeLaser(400, 300)
-        self.laser.scaleSprite((16, 80))
-        self.laser.rotateSprite(45)
-        self.laser2 = bullet.makeLaser(400, 300)
-        self.laser2.scaleSprite((16, 80))
-        self.allSprites.add(self.laser, self.laser2)
 
     def updateLevel(self):
         '''
             Prepares enemies and bullets at the start of the level and handles game logic.
         '''
-        acts = [self.bossEntrance, self.launchMissiles, self.rotatingLaser]
+        acts = [self.bossEntrance, self.launchMissiles, self.rotatingLaser, self.bulletWaves]
         if self.act < len(acts):
             acts[self.act]()
 
@@ -350,20 +349,16 @@ class Level_3(LevelBlueprint):
         '''
             Boss launches missiles that follow player's movements.
         '''
-        emptyGroupCount = 0
-        for group in self.bulletLists:
-            if self.isGroupEmpty(group):
-                emptyGroupCount += 1
-            else:
-                for blt in group:
-                    if paths.calcDistance(player.player, blt) < 100 or blt.flyOff == True:
-                        paths.explode(blt, blt.rect.x, blt.rect.y, int(blt.speed/3))
-                        blt.flyOff = True
-                    elif blt.radius > 0 or self.frame.maxReached():
-                        paths.followEntity(player.player, blt, False)
-                    blt.checkBounds(True, True, True, True)
+        group = self.bulletLists[0]
+        for blt in group:
+            if paths.calcDistance(player.player, blt) < 100 or blt.flyOff == True:
+                paths.explode(blt, blt.rect.x, blt.rect.y, int(blt.speed/3))
+                blt.flyOff = True
+            elif blt.radius > 0 or self.frame.maxReached():
+                paths.followEntity(player.player, blt, False)
+            blt.checkBounds(True, True, True, True)
         self.frame.add()
-        if emptyGroupCount == self.bullet_rows:
+        if self.isGroupEmpty(group):
             self.act += 1
             self.frame.count = 0
 
@@ -371,8 +366,39 @@ class Level_3(LevelBlueprint):
         '''
             Rotating lasers that flicker.
         '''
-        # todo test enlongated laser and rotation here
-        pass
+        group = self.bulletLists[1]
+        pos = [(352, 150), (430, 150)]
+        for laser in group:
+            # they widen, stretch out and rotate
+            # width 0.5~1x
+            # height 0.5~10x
+            pass
+
+    def bulletWaves(self):
+        group = selfBulletLists[3]
+        self.act += 1
+        # waves of circular bullet patterns with a small hole for the ship to fly through
 
 # levelList = [Level_1(), Level_2(), Level_3()]
 levelList = [Level_3()]
+
+# == Functions for level preparation and updating ==
+def prepareCircle(count, center_pos, variant, groups):
+    '''
+        Prepares a set of bullets, distributed in a circle.
+        count       Number of bullets in a circle
+        center_pos  Center of circle
+        variant     Small ball sprite variant
+        groups      A list of groups, to which bullet should be added
+    '''
+    angles = position.distributeAngle(count)
+    for i in range(count):
+        ball = bullet.makeSmallBall(center_pos[0], center_pos[1], angles[i], variant)
+        addToGroups(ball, groups)
+
+def addToGroups(obj, groups):
+    '''
+        Adds object to specified groups.
+    '''
+    for group in groups:
+        group.add(obj)
