@@ -28,12 +28,11 @@ class Highscore():
         f = open(self.file)
         for line in f:
             if line[0] == '#':
-                pass
-            else:
-                line = line.rstrip()
-                score_name = line.split(" ", 1)
-                score_name[0] = self.attrib_int(score_name[0])
-                highscore_list.append(score_name)
+                continue
+            line = line.rstrip()
+            score_name = line.split(" ", 1)
+            score_name[0] = self.attrib_int(score_name[0])
+            highscore_list.append(score_name)
         f.close()
         return highscore_list
 
@@ -78,6 +77,9 @@ class Highscore():
             If player has no points, there is no point to compare it with the highscore list.
         '''
         if self.player_score > 0:
+            if not self.top_score:
+                self.player_name = self.nameInput()
+                self.save()
             for score in self.top_score:
                 if score[0] < self.player_score:
                     self.player_name = self.nameInput()

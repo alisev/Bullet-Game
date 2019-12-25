@@ -233,11 +233,7 @@ class GameOver(GameState):
     def startup(self, persistent):
         self.persist = persistent 
         self.player_score = self.persist["score"]
-        self.message = ""
-        if self.persist["lives"] > 0:
-            self.message = "Congratulations! You've won!"
-        else:
-            self.message = "Game Over"
+        self.message = ("Game Over", "Congratulations! You've won!")[self.persist["lives"] > 0]
         self.highscores = highscore.Highscore(self.player_score, highscore.file)
         self.highscores.compare()
         
