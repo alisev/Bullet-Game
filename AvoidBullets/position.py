@@ -1,3 +1,4 @@
+import math
 
 '''
     Calculates entity start positions and returns them as list
@@ -36,4 +37,29 @@ def distributeAngle(count):
     for i in range(count):
         position_list.append(angle)
         angle += offset
+    return position_list
+
+def triangleFormation(count, pos, distance, angle = 0):
+    '''
+        Creates a list of positions, that are formated within a triangle.
+        count       Entity count
+        pos         Position for the first entity
+        distance    Distance between entities
+        angle       Triangle's angle
+    '''
+    position_list = []
+    perRow = 1
+    counter = 0
+    row = 1
+    for i in range(count):
+        position_list.append(pos[:])
+        row += 1
+        if counter == perRow - 1: # sākas jauna rinda
+            pos[0] -= int(distance/2) * (row - 1)
+            pos[1] -= int((distance * math.sqrt(2))/2)
+            perRow += 1
+            counter = 0
+        else:
+            pos[0] += distance
+            counter += 1
     return position_list

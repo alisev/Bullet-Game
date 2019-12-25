@@ -1,10 +1,9 @@
 import pygame as pg
-from constants import *
+import constants
 import highscore
-from levels import Level, levelList
-from player import Player
+import levels
+import player
 import util
-import os
 
 class Game(object):
     '''
@@ -23,7 +22,7 @@ class Game(object):
         self.done = False
         self.screen = screen
         self.clock = pg.time.Clock()
-        self.fps = FPS
+        self.fps = constants.FPS
         self.states = states
         self.state_name = start_state
         self.state = self.states[self.state_name]
@@ -140,9 +139,9 @@ class SplashScreen(GameState):
                 self.done = True
     
     def draw(self, surface):
-        surface.fill(BGCOLOR)
+        surface.fill(constants.COLOR["bg"])
         surface.blit(self.title_logo,(121,100))
-        # TODO splash screen graphic rendering goes here
+        util.renderText(surface, 'Press Enter key to start the game', [150, 350], 22)
 
 class Gameplay(GameState):
     '''
@@ -155,11 +154,11 @@ class Gameplay(GameState):
     '''
     def __init__(self):
         super(Gameplay, self).__init__()
-        self.levels = Level(levelList)
+        self.levels = levels.Level(levels.levelList)
         self.next_state = "GAMEOVER"
         
     def startup(self, persistent):
-        self.player = Player()
+        self.player = player.player
         self.allSprites = pg.sprite.Group()
         self.allSprites.add(self.player)
 
@@ -202,7 +201,7 @@ class Gameplay(GameState):
             self.done = True
 
     def draw(self, surface):
-        surface.fill(BGCOLOR)
+        surface.fill(constants.COLOR["bg"])
         self.levels.draw()
         self.allSprites.draw(surface)
         self.lifeCounter(surface)
@@ -212,7 +211,7 @@ class Gameplay(GameState):
         '''
             Displays how many lives player has left.
         '''
-        lives_max = PLAYER_MAX_LIVES
+        lives_max = constants.PLAYER_MAX_LIVES
         lives = self.player.lives
         sprites = ["life.png", "life_empty.png"]
         x_pos = 25
@@ -234,11 +233,7 @@ class GameOver(GameState):
     def startup(self, persistent):
         self.persist = persistent 
         self.player_score = self.persist["score"]
-        self.message = ""
-        if self.persist["lives"] > 0:
-            self.message = "Congratulations! You've won!"
-        else:
-            self.message = "Game Over"
+        self.message = ("Game Over", "Congratulations! You've won!")[self.persist["lives"] > 0]
         self.highscores = highscore.Highscore(self.player_score, highscore.file)
         self.highscores.compare()
         
@@ -253,7 +248,7 @@ class GameOver(GameState):
         pass
 
     def draw(self, surface):
-        surface.fill(BGCOLOR)
+        surface.fill(constants.COLOR["bg"])
         util.renderText(surface, self.message, [100, 100], 36)
         util.renderText(surface, "You earned " + str(self.player_score) + " points.", [100, 144], 36)
         self.highscores.displayBest(surface)

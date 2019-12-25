@@ -1,9 +1,11 @@
 import pygame as pg
 import bullet
 import chara
-from constants import *
 import paths
 import position
+import player
+import frame
+import util
 
 '''
     Contains functions that handles all level logic and rendering.
@@ -22,6 +24,7 @@ class Level():
         self.level = self.levels[self.level_num]
 
     def resetGame(self):
+        player.player.reset()
         self.level_num = 0
         for level in self.levels:
             level.reset()
@@ -74,7 +77,6 @@ class Level():
                 enemy.gotHit()
                 earned_pts += enemy.value
         return earned_pts
-
 
 class LevelBlueprint():
     '''
@@ -137,7 +139,7 @@ class LevelBlueprint():
         '''
         self.prepare()
         self.updateLevel()
-        return self.isGroupEmpty(self.allSprites, lvl)
+        return self.isAllSpritesEmpty(lvl)
 
     def updateLevel(self):
         '''
@@ -163,18 +165,23 @@ class LevelBlueprint():
         '''
         pass
 
-    def isGroupEmpty(self, group, lvl):
+    def isGroupEmpty(self, group):
         '''
             Checks if given sprite group is empty.
             group   Sprite group to be checked
-            lvl     Current level
         '''
+        if len(group) == 0:
+            return True
+        return False
+
+    def isAllSpritesEmpty(self, lvl):
         data = {"level_num": lvl,
                 "points": 0}
-        if len(group) == 0:
+        if self.isGroupEmpty(self.allSprites):
             data["level_num"] += 1
             data["points"] = self.value
         return data
+
 
 class Level_1(LevelBlueprint):
     def __init__(self):
@@ -207,6 +214,7 @@ class Level_1(LevelBlueprint):
     def updateLevel(self):
         '''
             Prepares enemies and bullets at the start of the level and handles game logic.
+            Level 1 shoots meteors.
         '''
         for i in range(self.bullet_rows):
             for obj in self.bulletLists[i]:
@@ -226,47 +234,198 @@ class Level_2(LevelBlueprint):
         '''
             Creates a bug enemy and it's bullets.
         '''
-        self.bug = chara.makeBug((SCREEN_X / 2) - 36, -50)
+        self.bug = chara.makeBug(364, -50)
         for row in range(self.bullet_rows):
-            angles = position.distributeAngle(self.bullets_perRow)
-            for i in range(self.bullets_perRow):
-                ball = bullet.makeSmallBall(self.bug.rect.x + 36, self.bug.rect.y + 36, angles[i], 1)
-                self.bug.children.add(ball)
-                self.bulletLists[row].add(ball)
-                self.allSprites.add(ball)
-        self.allSprites.add(self.bug)
-        self.enemyLists[0].add(self.bug)
+            prepareCircle(self.bullets_perRow, (self.bug.rect.x + 36, self.bug.rect.y + 36), 1, [self.bug.children, self.bulletLists[row], self.allSprites])
+        addToGroups(self.bug, [self.allSprites, self.enemyLists[0]])
+        self.bullets_gone = False
+        self.bug_leave_done = False
+        self.bug_enter_done = False
 
     def updateLevel(self):
-        if self.bug.rect.y < 150:
-            self.bug.move(0, self.bug.speed)
+        if self.bug_enter_done == False:
+            self.bug_enter_done = self.bugMovement(150)
         else:
-            threshold = 10
-            th_reached = False
-            speed_r = 2
-            speed_a = 1
+            self.bullets_gone = self.ringMovement()
+        if self.bullets_gone:
+            self.bug_leave_done = self.bugMovement(-55, False)
+        if self.bug_leave_done:
+            self.bug.remove()
 
-            for ring in self.bulletLists:
-                for ball in ring:
-                    if ring == self.bulletLists[0] or ball.radius > 0 or (ball.radius == 0 and th_reached == True):
-                        paths.explode(ball, self.bug.rect.x + 36, self.bug.rect.y + 36, speed_r)
-                        paths.orbit(ball, self.bug.rect.x + 36, self.bug.rect.y + 36, speed_a)
-                        if ball.radius == threshold:
-                            th_reached = True
-                        else:
-                            th_reached = False
+    def bugMovement(self, target, moveDown = True):
+        '''
+            Bug enters the screen.
+            Returns bool if the action is completed.
+            target      Target y coordinate
+            moveDown    Bug is descending
+        '''
+        speed = self.bug.speed if moveDown else -self.bug.speed
+        if (self.bug.rect.y < target and moveDown) or (self.bug.rect.y > target and moveDown == False):
+            self.bug.move(0, speed)
+            return False
+        return True
+
+    def ringMovement(self):
+        '''
+            Bullets orbit around the bug and move away
+        '''
+        th_reached = False
+        speed_r = 2
+        speed_a = 1
+        emptyBulletGroups = []
+        for ring in self.bulletLists:
+            for ball in ring:
+                if ring == self.bulletLists[0] or ball.radius > 0 or (ball.radius == 0 and th_reached == True):
+                    th_reached = bulletMovement(self.bug, ball, speed_r, speed_a)
+            if len(ring) == 0:
+                emptyBulletGroups.append(True)
+        if len(emptyBulletGroups) == self.bullet_rows:
+            return True
+        return False
 
 class Level_3(LevelBlueprint):
     def __init__(self):
-        super().__init__(1, 1, value = 500) # TODO change to appropirate numbers
-    
+        bullet_count = [10, 18, 24, 30]
+        super().__init__(len(bullet_count), bullet_count, 1, 1, value = 500)
+
+    def prepareMissiles(self, group):
+        y = self.boss.rect.y
+        for i in range(self.bullets_perRow[group]):
+            blt = bullet.makeHomingMissile(393, y + 5)
+            blt.flyOff = False
+            addToGroups(blt, [self.boss.children, self.bulletLists[group], self.allSprites])
+
+    def prepareLasers(self, group):
+        for i in range(self.bullets_perRow[group]):
+            laser = bullet.makeLaser(-18, -18)
+            laser.org_image = laser.image
+            laser.scaleSprite((0.5, 0.5))
+            addToGroups(laser, [self.bulletLists[group], self.allSprites])
+
     def prepareLevel(self):
-        pass
+        x = 352
+        y = -55
+        self.boss = chara.makeBoss(x, y)
+        self.boss_has_entered = False
+        prepOrder = [self.prepareMissiles, prepareCircle, prepareCircle, prepareCircle]
+        for i in range(self.bullet_rows):
+            if prepOrder[i] is not prepareCircle:
+                prepOrder[i](i)
+            else:
+                prepareCircle(self.bullets_perRow[i], (self.boss.rect.x + 48, self.boss.rect.y + 27), 0, [self.bulletLists[i], self.boss.children, self.allSprites])
+        addToGroups(self.boss, [self.enemyLists[0], self.allSprites])
+        self.frame = frame.Frame(40)
+        self.act = 0
 
     def updateLevel(self):
         '''
             Prepares enemies and bullets at the start of the level and handles game logic.
         '''
-        pass
+        acts = [self.bossEntrance, self.launchMissiles, self.bulletWaves]
+        if self.act < len(acts):
+            acts[self.act]()
 
-levelList = [Level_1(), Level_2()]
+    def bossEntrance(self):
+        '''
+            Boss sprite enters the screen.
+        '''
+        boss_target_y = 100
+        if self.boss.rect.y < boss_target_y:
+            self.boss.move(0, 5)
+            for child in self.boss.children:
+                child.move(0, 5)
+            return
+        self.act += 1
+
+    def launchMissiles(self):
+        '''
+            Boss launches missiles that follow player's movements.
+        '''
+        group = self.bulletLists[0]
+        for blt in group:
+            if paths.calcDistance(player.player, blt) < 100 or blt.flyOff == True:
+                paths.explode(blt, blt.rect.x, blt.rect.y, int(blt.speed/3))
+                blt.flyOff = True
+            elif blt.radius > 0 or self.frame.maxReached():
+                paths.followEntity(player.player, blt, False)
+            blt.checkBounds(True, True, True, True)
+        self.frame.add()
+        if self.isGroupEmpty(group):
+            self.act += 1
+            self.frame.count = 0
+
+    def rotatingLaser(self):
+        '''
+            Rotating lasers.
+        '''
+        group = self.bulletLists[1]
+        pos = [(352, 150), (430, 150)]
+        i = 0
+        self.frame.max_count = 30
+        for laser in group:
+            if not self.frame.maxReached():
+                laser.image = laser.org_image
+                laser.scaleSprite((1, self.frame.count))
+                # TODO adjust position
+                laser.rect.x = pos[i][0]
+                laser.rect.y = pos[i][1]
+                i += 1
+            else:
+                self.frame.count = self.frame.max_count
+                # TODO rotate
+        self.frame.add()
+        # TODO condition when to end
+
+    def bulletWaves(self):
+        '''
+           Circles of bullets. In this case self.frame is used to determine when to send out next row.
+           blt.radius must be dividable by bullet radius speed in path.explode function
+        '''
+        groups = self.bulletLists[1:]
+        emptyGroups = 0
+        self.frame.max_count = len(groups)
+        for group in groups:
+            if groups.index(group) <= self.frame.count:
+                radiusChecked = False
+                for blt in group:
+                    paths.explode(blt, self.boss.rect.x + 48, self.boss.rect.y + 27, 4)
+                    paths.orbit(blt, self.boss.rect.x + 48, self.boss.rect.y + 27, 1)
+                    if blt.radius == 200 and radiusChecked == False:
+                        self.frame.add()
+                        radiusChecked = True
+                    blt.checkBounds(True, True, True, True)
+            if self.isGroupEmpty(group):
+                emptyGroups += 1
+        if emptyGroups == len(groups):
+            self.act += 1
+
+levelList = [Level_1(), Level_2(), Level_3()]
+
+# == Some functions for level preparation and updating ==
+def prepareCircle(count, center_pos, variant, groups):
+    '''
+        Prepares a set of bullets, distributed in a circle.
+        count       Number of bullets in a circle
+        center_pos  Center of circle
+        variant     Small ball sprite variant
+        groups      A list of groups, to which bullet should be added
+    '''
+    angles = position.distributeAngle(count)
+    for i in range(count):
+        ball = bullet.makeSmallBall(center_pos[0], center_pos[1], angles[i], variant)
+        addToGroups(ball, groups)
+
+def addToGroups(obj, groups):
+    '''
+        Adds object to specified groups.
+    '''
+    for group in groups:
+        group.add(obj)
+
+def bulletMovement(enemy, bullet, speed_r, speed_a):
+    paths.explode(bullet, enemy.rect.x + 36, enemy.rect.y + 36, speed_r)
+    paths.orbit(bullet, enemy.rect.x + 36, enemy.rect.y + 36, speed_a)
+    bullet.checkBounds(True, True, True, True)
+    if bullet.radius == 10:
+        return True
+    return False

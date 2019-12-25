@@ -9,9 +9,12 @@ FPS = 30
 TITLE = "Space Cruise"
 
 # Colors used
-BGCOLOR = (16, 20, 38)
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-YELLOW = (247,190,22)
+COLOR = {
+    "bg": (16, 20, 38),
+    "white": (255, 255, 255),
+    "black": (0, 0, 0),
+    "yellow": (247, 190, 22),
+    "salmon": (194, 91, 103)
+    }
 
 PLAYER_MAX_LIVES = 3

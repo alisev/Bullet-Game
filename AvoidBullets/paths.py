@@ -1,4 +1,5 @@
 import math
+import util
 
 '''
     Functions that moves entity's in a path. 
@@ -49,18 +50,41 @@ def followEntity(entity_target, entity_move, enable_rotation):
         entity_move         An entity that moves towards entity_target
         enable_rotation     Enable rotation of entity_move sprite
     '''
-    pass
+    start_pos = entity_move.getEntityPos()
+    target_pos = entity_target.getEntityPos()
+    vector = util.calcVector(start_pos, target_pos)
+    entity_move.angle = calcAngle(vector)
+    entity_move.radius = entity_move.speed
+    calcCircular(entity_move, entity_move.rect.x, entity_move.rect.y)
 
-def aimAtEntity(entity_target, entity_aim):
+def aimAtEntity(entity_target, entity_aim, entity_rotation = False):
     '''
         Aims a group of sprites at an entity
         entity_target       A target entity
         entity_aim          An entity that is aimed at entity_target
         enable_rotation     Enable rotation of entity_aim sprite
     '''
+    start_pos = entity_aim.getEntityPos()
+    target_pos = entity_target.getEntityPos()
+    vector = util.calcVector(start_pos, target_pos)
+    #TODO if entity_rotation==True, calculate angle, how far the sprite needs to be rotated
+    return vector
 
-def rotateEntity(entity):
+def calcAngle(vec):
     '''
-        Rotates an individual entity's sprite.
+        Calculates angle from vector.
+        vec Vector
     '''
-    pass
+    angle = math.atan2(vec[1], vec[0])
+    return math.degrees(angle)
+
+def calcDistance(entity1, entity2):
+    '''
+        Calculates distance between two entities.
+    '''
+    pos1 = entity1.getEntityPos()
+    pos2 = entity2.getEntityPos()
+    vector = util.calcVector(pos1, pos2)
+    distance = math.sqrt(vector[0]**2 + vector[1]**2)
+    return distance
+    
